@@ -36,6 +36,7 @@ contract TubInterface {
     function rap(bytes32) public view returns (uint);
     function per() public view returns (uint);
     function pep() public view returns (PepInterface);
+    function tag() public view returns (uint wad);
 }
 
 contract SafeCDPFactory {
@@ -44,10 +45,12 @@ contract SafeCDPFactory {
     // A set of all Safe CDPs ever created
     mapping(address => bool) safeCDPSet;
 
+    address tubAddr; 
     address daiAddr;
     address sponsorPoolAddr;
 
-    constructor(address _daiAddr, address _sponsorPoolAddr) public {
+    constructor(address _tubAddr, address _daiAddr, address _sponsorPoolAddr) public {
+        tubAddr = _tubAddr;
         daiAddr = _daiAddr;
         sponsorPoolAddr = _sponsorPoolAddr;
     }
@@ -64,15 +67,16 @@ contract SafeCDPFactory {
     // rewardForKeeper: the percentage of debt used to reward keepers and
     // sponsors for their service. E.g. 10
     function createSafeCDP(
-        address _cdpAddr,
+        bytes32 _cup,
         uint _targetCollateralization,
         uint _marginCallThreshold,
         uint _marginCallDuration,
         uint _rewardForKeeper) public returns (address) {
         SafeCDP cdp = new SafeCDP(
-            _cdpAddr,
+            tubAddr,
             daiAddr,
             sponsorPoolAddr,
+            _cup,
             _targetCollateralization,
             _marginCallThreshold,
             _marginCallDuration,
@@ -93,10 +97,13 @@ contract SafeCDP {
 
     event MarginCall(address keeper, uint amount);
 
-    TubInterface cdp;
-    SponsorPoolInterface sponsorPool;
+    // tub is the global cdp record store
+    // https://github.com/makerdao/sai/blob/master/DEVELOPING.md
+    TubInterface tub;
     TokenInterface dai;
+    SponsorPoolInterface sponsorPool;
 
+    bytes cup;
     uint targetCollateralization;
     uint marginCallThreshold;
     uint marginCallDuration;
@@ -107,17 +114,19 @@ contract SafeCDP {
     mapping(address => DebtPayment[]) debtPaid;
 
     constructor(
-        address _cdp,
+        address _tubAddr,
         address _daiAddr,
         address _sponsorPoolAddr,
+        bytes32 _cdp,
         uint _targetCollateralization,
         uint _marginCallThreshold,
         uint _marginCallDuration,
         uint _rewardForKeeper) public {
 
-        cdp = TubInterface(_cdp);
+        tub = TubInterface(_tubAddr);
         dai = TokenInterface(_daiAddr);
         sponsorPool = SponsorPoolInterface(_sponsorPoolAddr);
+        cup = _cup;
         targetCollateralization = _targetCollateralization;
         marginCallThreshold = _marginCallThreshold;
         marginCallDuration = _marginCallDuration;
@@ -139,8 +148,29 @@ contract SafeCDP {
         emit MarginCall(msg.sender, debtToPay);
     }
 
-    function withdraw() public {
+    function withdrawOwnedCollateral() public {
 
+    }
+
+    // Pay debt to keepers in response to a margin call.
+    //
+    // Although only the owner has any reason to pay debt, there seems to be
+    // no harm in allowing anyone to pay debt, similar to how anyone can wipe
+    // any CDP's debt.
+    function payDebt() public returns (uint debtID) {
+        
+    }
+
+    function totalAccuredDebt() public view returns (uint) {
+
+    }
+
+    // Returns whether the collateralization is above the margin call ratio.
+    function safe() public view returns (bool) {
+        var pro = rmul(cdp.tag(), cdp.ink(cup));
+        var con = rmul(vox.par(), tab(cup));
+        var min = rmul(con, mat);
+        return pro >= min;
     }
 
 }
