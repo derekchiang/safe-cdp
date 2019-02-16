@@ -15,7 +15,12 @@ contract TokenInterface {
     function burn(address, uint) public;
 }
 
+contract VoxInterface {
+    function par() public returns (uint);
+}
+
 contract TubInterface {
+    VoxInterface public vox;  // Target price feed
     function open() public returns (bytes32);
     function join(uint) public;
     function exit(uint) public;
@@ -104,8 +109,14 @@ contract SafeCDP {
     SponsorPoolInterface sponsorPool;
 
     bytes cup;
+
+    // The unit of target collateralization and margin call threshold is the
+    // same as the unit for liquidation ratio in the SAI contracts, which are
+    // all denominated by RAY:
+    // https://github.com/makerdao/dai.js/blob/7d20ed9d64e1add128f4fa39b76c72ac4489c34d/src/utils/constants.js#L5
     uint targetCollateralization;
     uint marginCallThreshold;
+
     uint marginCallDuration;
     uint rewardForKeeper;
 
@@ -134,15 +145,11 @@ contract SafeCDP {
     }
 
     function marginCall() public {
-        // TODO: check what the return value of per() actually means
-        uint currentCollateralization = cdp.per();
-        require(currentCollateralization <= marginCallThreshold, "Current collateralization is not below the margin call threshold.");
+        require(!safe(), "Current collateralization is not below the margin call threshold.");
 
-        // TODO: should you use air() or pie()?
-        // TODO: probably need SafeMath here
-        uint debtToPay = (targetCollateralization - currentCollateralization) * cdp.air();
-        sponsorPool.approvePayment(debtToPay);
-        dai.burn(sponsorPool, debtToPay);
+        uint debtToPay = diffWithTargetCollateral();
+        sponsorPool.claimPayment(debtToPay);
+        tub.wipe(cup, debtToPay);
         debtPaid[msg.sender].push(DebtPayment(debtToPay, now));
 
         emit MarginCall(msg.sender, debtToPay);
@@ -166,11 +173,19 @@ contract SafeCDP {
     }
 
     // Returns whether the collateralization is above the margin call ratio.
+    // Adopted from: https://github.com/makerdao/sai/blob/0dd0a799e4746ac1955b67898762cff9b71aea17/src/tub.sol#L241
     function safe() public view returns (bool) {
-        var pro = rmul(cdp.tag(), cdp.ink(cup));
-        var con = rmul(vox.par(), tab(cup));
-        var min = rmul(con, mat);
+        var pro = rmul(tub.tag(), tub.ink(cup));
+        var con = rmul(tub.vox.par(), tub.tab(cup));
+        var min = rmul(con, marginCallThreshold);
         return pro >= min;
+    }
+
+    // The difference between the total amount of collateral right now, 
+    function diffWithTargetCollateral() public view returns () {
+        var con = rmul(tub.vox.par(), tub.tab(cup));
+        var pro = rmul(tub.tag(), tub.ink(cup));
+        return con - pro / targetCollateral;
     }
 
 }
