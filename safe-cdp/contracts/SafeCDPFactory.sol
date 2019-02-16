@@ -1,5 +1,7 @@
 pragma solidity ^0.4.24;
 
+import 'openzeppelin-solidity/contracts/math/SafeMath.sol';
+
 contract PepInterface {
     function peek() public returns (bytes32, bool);
 }
@@ -93,14 +95,18 @@ contract SafeCDPFactory {
 
 contract SafeCDP {
 
-    struct DebtPayment {
-        // The amount of the payment
+    using SafeMath for uint;
+
+    struct MarginCall {
+        address keeper;
+        // The amount that the keeper has paid
         uint amount;
         // The time when the payment was made
         uint time;
     }
 
-    event MarginCall(address keeper, uint amount);
+    event MarginCallInvoked(uint id, address keeper, uint amount);
+    event MarginCallsResponded(uint[] marginCallIDs);
 
     // tub is the global cdp record store
     // https://github.com/makerdao/sai/blob/master/DEVELOPING.md
@@ -117,12 +123,21 @@ contract SafeCDP {
     uint targetCollateralization;
     uint marginCallThreshold;
 
+    // The amount of time the owner has to respond to a margin call before
+    // penalty starts accuring and the keeper starts being able to withdraw
+    // collaterals.
     uint marginCallDuration;
+    // The reward that the keeper gets to earn, as a percentage of the debt
+    // that the keeper paid.  For instance if it's 10, the reward is 10%.
     uint rewardForKeeper;
 
+    // A list of margin calls that have been invoked but not cleared.
+    MarginCall[] marginCalls;
+    uint marginCallNonce;
 
-    // Map from the keeper address to the debt payments they have made
-    mapping(address => DebtPayment[]) debtPaid;
+    // Mapping from keeper address to the amount of DAI they can claim from
+    // the amount of debt that the owner has paid.
+    mapping(address => uint) owedToKeeper;
 
     constructor(
         address _tubAddr,
@@ -149,27 +164,79 @@ contract SafeCDP {
 
         uint debtToPay = diffWithTargetCollateral();
         sponsorPool.claimPayment(debtToPay);
+        dai.approve(tub, debtToPay);
         tub.wipe(cup, debtToPay);
-        debtPaid[msg.sender].push(DebtPayment(debtToPay, now));
+        marginCalls.push(MarginCall(msg.sender, debtToPay, now));
 
-        emit MarginCall(msg.sender, debtToPay);
+        emit MarginCall(marginCallNounce, msg.sender, debtToPay);
+        marginCallNonce = marginCallNonce.add(1);
     }
 
     function withdrawOwnedCollateral() public {
 
     }
 
-    // Pay debt to keepers in response to a margin call.
+    // Pay debt to keepers in response to margin calls.
     //
     // Although only the owner has any reason to pay debt, there seems to be
     // no harm in allowing anyone to pay debt, similar to how anyone can wipe
     // any CDP's debt.
-    function payDebt() public returns (uint debtID) {
-        
+    //
+    // TODO: Right now we are paying all debt.  Would it make sense to pay
+    // partial debt?
+    function respondToMarginCalls() public {
+        uint totalPrincipal = 0;
+        uint totalInterest = 0;
+        uint totalInterestForPool = 0;
+        for (uint i = 0; i < marginCalls.length; i++) {
+            address keeper = marginCalls[i].keeper;
+            uint principal = marginCalls[i].amount;
+            uint interest = computeInterest(marginCalls[i]);
+
+            uint interestForKeeper = interest.div(2);
+            uint interestForPool = interest.sub(interestForKeeper);
+
+            owedToKeeper[keeper] = owedToKeeper[keeper].add(interestForKeeper);
+            dai.approve(keeper, ownedToKeeper[keeper]);
+
+            totalPrincipal = totalPrincipal.add(principal);
+            totalInterest = totalInterest.add(interest);
+            totalInterestForPool = totalInterestForPool.add(interestForPool);
+        }
+
+        uint totalForPool = totalPrincipal.add(totalInterestForPool);
+
+        // Transfer tokens to self
+        dai.transferFrom(msg.sender, this, totalPrincipal.add(totalInterest));
+        // Transfer tokens to the pool
+        dai.transferFrom(msg.sender, sponsorPool, totalForPool);
     }
 
+    // The total amount of debt that the user currently owes to keepers.
+    // In other words, this is the amount that needs to be approved for
+    // transfer before the owner calls respondToMarginCalls.
     function totalAccuredDebt() public view returns (uint) {
+        uint total = 0;
+        for (uint i = 0; i < marginCalls.length; i++) {
+           uint principal = marginCalls[i].amount;
+           uint interest = computePayment(marginCalls[i]);
+           total = total.add(principal.add(interest));
+        }
+        return total;
+    }
 
+    function computeInterest(MarginCall mc) public pure returns (uint) {
+        uint interest;
+        if (now < (mc.time + marginCallDuration)) {
+            // This is the case if the owner responds to the margin call in time
+            // div by 100 because rewardForKeeper is a percentage.
+            interest = amount.mul(rewardForKeeper).div(100);
+        } else {
+            // If the owner responds after the marginCallDuration has passed,
+            // additional interest will start accuring.
+            interest = amount.mul(rewardKorKeeper).div(100).mul(now.sub(mc.time).div(marginCallDuration));
+        }
+        return interest;
     }
 
     // Returns whether the collateralization is above the margin call ratio.
@@ -185,7 +252,7 @@ contract SafeCDP {
     function diffWithTargetCollateral() public view returns () {
         var con = rmul(tub.vox.par(), tub.tab(cup));
         var pro = rmul(tub.tag(), tub.ink(cup));
-        return con - pro / targetCollateral;
+        return con.sub(pro.div(targetCollateral));
     }
 
 }
