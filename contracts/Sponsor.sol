@@ -11,7 +11,8 @@ contract Sponsor is Ownable{
   event newDeposit(address sponsor, uint depositAmount);
   event newWithdraw(address sponsor, uint withdrawAmount);
 
-  mapping (address => uint) public ownerDepositAmount;
+  mapping (address => uint) public sponsorDepositBalance;
+  mapping (address => bool) public ;
 
   modifier onlySafeCDP() {
     require(safeCDPSet == True);
@@ -24,11 +25,10 @@ contract Sponsor is Ownable{
 
   //Sponsor deposits funds into the pool
   function deposit(uint _depositAmount) {
-    //approve(address(this), _depositAmount);
     //require(tokenAllowance(msg.sender, this) = _depositAmount);
     require(msg.value == 0);
     transfer(this, _depositAmount);
-    ownerDepositAmount[msg.sender] = ownerDepositAmount[msg.sender].add(_depositAmount);
+    sponsorDepositBalance[msg.sender] = sponsorDepositBalance[msg.sender].add(_depositAmount);
     newDeposit(msg.sender, _depositAmount);
   }
 
@@ -38,22 +38,18 @@ contract Sponsor is Ownable{
   //Sponsor withdraws the amount
   function withdraw(uint _withdrawAmount) {
     require(msg.value == 0);
-    require(ownerDepositAmount[msg.sender] >= _withdrawAmount);
+    require(sponsorDepositBalance[msg.sender] >= _withdrawAmount);
     require(address(this).balance.sub(_withdrawAmount)>=0);
-    ownerDepositAmount[msg.sender] = ownerDepositAmount[msg.sender].sub(_withdrawAmount);
+    sponsorDepositBalance[msg.sender] = sponsorDepositBalance[msg.sender].sub(_withdrawAmount);
     tokenTransfer(msg.sender,_withdrawAmount);
     newWithdraw(msg.sender, _withdrawAmount);
   }
 
-  //Keeper allowance
-  function setKeeperAllowance(uint _allowanceAmount) public onlySafeCDP {
+  //Keeper Allowance
+  function approvePayment(uint _approvePaymentAmount) public onlySafeCDP {
     require(msg.value == 0);
-  }
+    approve(msg.sender,_approvePaymentAmount);
 
-  //Keeper takes funds to pay the CDP
-  function payDebt(uint _payDebtAmount) public onlySafeCDP {
-    require(msg.value == 0);
-    tokenTransfer(msg.sender,_payDebtAmount);
   }
 
   function returnDebt() public onlySafeCDP {
