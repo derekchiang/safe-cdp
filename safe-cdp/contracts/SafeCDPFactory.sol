@@ -12,6 +12,7 @@ contract TokenInterface {
     function transferFrom(address, address, uint) public returns (bool);
     function deposit() public payable;
     function withdraw(uint) public;
+    function burn(address, uint) public;
 }
 
 contract TubInterface {
@@ -43,9 +44,11 @@ contract SafeCDPFactory {
     // A set of all Safe CDPs ever created
     mapping(address => bool) safeCDPSet;
 
+    address daiAddr;
     address sponsorPoolAddr;
 
-    constructor(address _sponsorPoolAddr) public {
+    constructor(address _daiAddr, address _sponsorPoolAddr) public {
+        daiAddr = _daiAddr;
         sponsorPoolAddr = _sponsorPoolAddr;
     }
 
@@ -68,6 +71,8 @@ contract SafeCDPFactory {
         uint _rewardForKeeper) public returns (address) {
         SafeCDP cdp = new SafeCDP(
             _cdpAddr,
+            daiAddr,
+            sponsorPoolAddr,
             _targetCollateralization,
             _marginCallThreshold,
             _marginCallDuration,
@@ -79,20 +84,40 @@ contract SafeCDPFactory {
 
 contract SafeCDP {
 
+    struct DebtPayment {
+        // The amount of the payment
+        uint amount;
+        // The time when the payment was made
+        uint time;
+    }
+
+    event MarginCall(address keeper, uint amount);
+
     TubInterface cdp;
+    SponsorPoolInterface sponsorPool;
+    TokenInterface dai;
+
     uint targetCollateralization;
     uint marginCallThreshold;
     uint marginCallDuration;
     uint rewardForKeeper;
 
+
+    // Map from the keeper address to the debt payments they have made
+    mapping(address => DebtPayment[]) debtPaid;
+
     constructor(
         address _cdp,
+        address _daiAddr,
+        address _sponsorPoolAddr,
         uint _targetCollateralization,
         uint _marginCallThreshold,
         uint _marginCallDuration,
         uint _rewardForKeeper) public {
 
         cdp = TubInterface(_cdp);
+        dai = TokenInterface(_daiAddr);
+        sponsorPool = SponsorPoolInterface(_sponsorPoolAddr);
         targetCollateralization = _targetCollateralization;
         marginCallThreshold = _marginCallThreshold;
         marginCallDuration = _marginCallDuration;
@@ -102,9 +127,20 @@ contract SafeCDP {
     function marginCall() public {
         // TODO: check what the return value of per() actually means
         uint currentCollateralization = cdp.per();
-        if (currentCollateralization <= marginCallThreshold) {
-            
-        }
+        require(currentCollateralization <= marginCallThreshold, "Current collateralization is not below the margin call threshold.");
+
+        // TODO: should you use air() or pie()?
+        // TODO: probably need SafeMath here
+        uint debtToPay = (targetCollateralization - currentCollateralization) * cdp.air();
+        sponsorPool.approvePayment(debtToPay);
+        dai.burn(sponsorPool, debtToPay);
+        debtPaid[msg.sender].push(DebtPayment(debtToPay, now));
+
+        emit MarginCall(msg.sender, debtToPay);
+    }
+
+    function withdraw() public {
+
     }
 
 }
