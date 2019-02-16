@@ -12,6 +12,7 @@ import { users } from "react-icons-kit/fa/users";
 import { shoppingCart } from "react-icons-kit/fa/shoppingCart";
 import { cubes } from "react-icons-kit/fa/cubes";
 import { circleO } from "react-icons-kit/fa/circleO";
+import logo from "../assets/imgs/SafeCDPlogo.svg";
 
 const AppContainer = styled(BaseAppContainer)`
   height: calc(100vh - 40px);
@@ -45,9 +46,11 @@ const theme = {
 };
 
 const Text = styled.div`
-  font-size: 0.72em;
-  text-transform: uppercase;
+  font-size: 0.70em;
+  /* text-transform: uppercase; */
+  font-family: "Roboto";
 `;
+
 
 const Icon = props => <BaseIcon size={32} icon={props.icon} />;
 
@@ -67,6 +70,9 @@ export default class SideBar extends React.Component {
             theme={theme}
             onItemSelection={this.onItemSelection}
           >
+              <IconCnt style={{height:100, borderBottom: '1.5px solid #EDF2F9', width:'85%', margin:'0 auto'}}>
+                <img src={logo} alt="SafeCDP logo" width="200"/>
+              </IconCnt>
             <Nav id="1">
               <IconCnt>
                 <Icon icon={dashboard} />

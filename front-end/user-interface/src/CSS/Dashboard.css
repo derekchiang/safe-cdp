@@ -3,7 +3,6 @@ cause the cards to expand
 offscreen forever */
 .dashboard {
     display: flex;
-    margin-top: 150px;
   }
   
   .dashboard .dashboardContainer {
@@ -16,7 +15,7 @@ offscreen forever */
   .dashboard .clientNavSidebar {
     width: 15%;
     height: 100vh;
-    padding-left: 10px;
+    /* padding-left: 10px; */
   }
   
   .dashboard .registry {

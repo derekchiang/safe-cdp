@@ -7278,6 +7278,12 @@ react-sidenav@^3.1.7:
   version "3.1.7"
   resolved "https://registry.yarnpkg.com/react-sidenav/-/react-sidenav-3.1.7.tgz#944e8384b441690aa8aedb7e87b6c3eba31fdfb2"
 
+react-sweet-progress@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/react-sweet-progress/-/react-sweet-progress-1.1.2.tgz#b27c6baa7c08a12cf0896565431ba477af249892"
+  dependencies:
+    classnames "^2.2.5"
+
 react-transition-group@^2.2.1:
   version "2.5.3"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-2.5.3.tgz#26de363cab19e5c88ae5dbae105c706cf953bb92"
