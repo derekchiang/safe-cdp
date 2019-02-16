@@ -168,7 +168,7 @@ contract SafeCDP is DSMath {
         rewardForKeeper = _rewardForKeeper;
     }
 
-    function marginCall() public {
+    function marginCall() public returns (uint) {
         require(!safe(), "Current collateralization is not below the margin call threshold.");
 
         uint debtToPay = diffWithTargetCollateral();
@@ -177,9 +177,11 @@ contract SafeCDP is DSMath {
         dai.approve(tub, debtToPay);
         tub.wipe(cup, debtToPay);
 
-        marginCalls.push(MarginCall(marginCallNonce, msg.sender, debtToPay, now));
-        emit MarginCallInvoked(marginCallNonce, msg.sender, debtToPay, now);
+        MarginCall mc = MarginCall(marginCallNonce, msg.sender, debtToPay, now);
+        marginCalls.push(mc);
+        emit MarginCallInvoked(mc.id, mc.keeper, mc.amount, mc.time);
         marginCallNonce = marginCallNonce.add(1);
+        return mc.id;
     }
 
     function withdrawOwedCollateral() public {
