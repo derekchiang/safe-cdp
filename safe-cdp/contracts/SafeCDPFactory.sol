@@ -38,7 +38,16 @@ contract TubInterface {
 }
 
 contract SafeCDPFactory {
+    // Map from user address to the Safe CDPs they own
     mapping(address => address[]) userToSafeCDPs;
+    // A set of all Safe CDPs ever created
+    mapping(address => bool) safeCDPSet;
+
+    address sponsorPoolAddr;
+
+    constructor(address _sponsorPoolAddr) public {
+        sponsorPoolAddr = _sponsorPoolAddr;
+    }
 
     // targetCollateralization: the collateralization ratio that keepers
     // should keep the CDP at. E.g. 200.
@@ -64,6 +73,7 @@ contract SafeCDPFactory {
             _marginCallDuration,
             _rewardForKeeper);
         userToSafeCDPs[msg.sender].push(address(cdp));
+        safeCDPSet[address(cdp)] = true;
     }
 }
 
@@ -87,6 +97,14 @@ contract SafeCDP {
         marginCallThreshold = _marginCallThreshold;
         marginCallDuration = _marginCallDuration;
         rewardForKeeper = _rewardForKeeper;
+    }
+
+    function marginCall() public {
+        // TODO: check what the return value of per() actually means
+        uint currentCollateralization = cdp.per();
+        if (currentCollateralization <= marginCallThreshold) {
+            
+        }
     }
 
 }
