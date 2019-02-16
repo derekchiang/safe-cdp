@@ -1,5 +1,8 @@
 pragma solidity ^0.4.24;
 
+// It's dumb that we are using both SafeMath and DSMath but I don't have
+// time to fix it.
+import "./DSMath.sol";
 import 'openzeppelin-solidity/contracts/math/SafeMath.sol';
 
 contract PepInterface {
@@ -44,6 +47,11 @@ contract TubInterface {
     function per() public view returns (uint);
     function pep() public view returns (PepInterface);
     function tag() public view returns (uint wad);
+}
+
+contract SponsorPoolInterface {
+    function approvePayment(uint amount) public;
+    function returnDebt(uint principal, uint interest) public;
 }
 
 contract SafeCDPFactory {
@@ -93,11 +101,12 @@ contract SafeCDPFactory {
     }
 }
 
-contract SafeCDP {
+contract SafeCDP is DSMath {
 
     using SafeMath for uint;
 
     struct MarginCall {
+        uint id;
         address keeper;
         // The amount that the keeper has paid
         uint amount;
@@ -105,7 +114,7 @@ contract SafeCDP {
         uint time;
     }
 
-    event MarginCallInvoked(uint id, address keeper, uint amount);
+    event MarginCallInvoked(uint id, address keeper, uint amount, uint time);
     event MarginCallsResponded(uint[] marginCallIDs);
 
     // tub is the global cdp record store
@@ -114,7 +123,7 @@ contract SafeCDP {
     TokenInterface dai;
     SponsorPoolInterface sponsorPool;
 
-    bytes cup;
+    bytes32 cup;
 
     // The unit of target collateralization and margin call threshold is the
     // same as the unit for liquidation ratio in the SAI contracts, which are
@@ -143,7 +152,7 @@ contract SafeCDP {
         address _tubAddr,
         address _daiAddr,
         address _sponsorPoolAddr,
-        bytes32 _cdp,
+        bytes32 _cup,
         uint _targetCollateralization,
         uint _marginCallThreshold,
         uint _marginCallDuration,
@@ -163,17 +172,18 @@ contract SafeCDP {
         require(!safe(), "Current collateralization is not below the margin call threshold.");
 
         uint debtToPay = diffWithTargetCollateral();
-        sponsorPool.claimPayment(debtToPay);
+        sponsorPool.approvePayment(debtToPay);
+        dai.transferFrom(sponsorPool, this, debtToPay);
         dai.approve(tub, debtToPay);
         tub.wipe(cup, debtToPay);
-        marginCalls.push(MarginCall(msg.sender, debtToPay, now));
 
-        emit MarginCall(marginCallNounce, msg.sender, debtToPay);
+        marginCalls.push(MarginCall(marginCallNonce, msg.sender, debtToPay, now));
+        emit MarginCallInvoked(marginCallNonce, msg.sender, debtToPay, now);
         marginCallNonce = marginCallNonce.add(1);
     }
 
-    function withdrawOwnedCollateral() public {
-
+    function withdrawOwedCollateral() public {
+        // TODO
     }
 
     // Pay debt to keepers in response to margin calls.
@@ -191,25 +201,28 @@ contract SafeCDP {
         for (uint i = 0; i < marginCalls.length; i++) {
             address keeper = marginCalls[i].keeper;
             uint principal = marginCalls[i].amount;
-            uint interest = computeInterest(marginCalls[i]);
+            uint interest = computeInterest(i);
 
             uint interestForKeeper = interest.div(2);
             uint interestForPool = interest.sub(interestForKeeper);
 
             owedToKeeper[keeper] = owedToKeeper[keeper].add(interestForKeeper);
-            dai.approve(keeper, ownedToKeeper[keeper]);
+            dai.approve(keeper, owedToKeeper[keeper]);
 
             totalPrincipal = totalPrincipal.add(principal);
             totalInterest = totalInterest.add(interest);
             totalInterestForPool = totalInterestForPool.add(interestForPool);
         }
 
-        uint totalForPool = totalPrincipal.add(totalInterestForPool);
+        // Clear margin calls
+        delete marginCalls;
 
+        uint totalForPool = totalPrincipal.add(totalInterestForPool);
         // Transfer tokens to self
         dai.transferFrom(msg.sender, this, totalPrincipal.add(totalInterest));
-        // Transfer tokens to the pool
-        dai.transferFrom(msg.sender, sponsorPool, totalForPool);
+        // Approve tokens for the pool and initiate the transfer
+        dai.approve(sponsorPool, totalForPool);
+        sponsorPool.returnDebt(totalPrincipal, totalInterestForPool);
     }
 
     // The total amount of debt that the user currently owes to keepers.
@@ -218,41 +231,44 @@ contract SafeCDP {
     function totalAccuredDebt() public view returns (uint) {
         uint total = 0;
         for (uint i = 0; i < marginCalls.length; i++) {
-           uint principal = marginCalls[i].amount;
-           uint interest = computePayment(marginCalls[i]);
-           total = total.add(principal.add(interest));
+            uint principal = marginCalls[i].amount;
+            uint interest = computeInterest(i);
+            total = total.add(principal.add(interest));
         }
         return total;
     }
 
-    function computeInterest(MarginCall mc) public pure returns (uint) {
+    function computeInterest(uint _mc) public view returns (uint) {
+        MarginCall storage mc = marginCalls[_mc];
         uint interest;
-        if (now < (mc.time + marginCallDuration)) {
+        if (now < mc.time.add(marginCallDuration)) {
             // This is the case if the owner responds to the margin call in time
             // div by 100 because rewardForKeeper is a percentage.
-            interest = amount.mul(rewardForKeeper).div(100);
+            interest = mc.amount.mul(rewardForKeeper).div(100);
         } else {
             // If the owner responds after the marginCallDuration has passed,
             // additional interest will start accuring.
-            interest = amount.mul(rewardKorKeeper).div(100).mul(now.sub(mc.time).div(marginCallDuration));
+            interest = mc.amount.mul(rewardForKeeper).div(100).mul(now.sub(mc.time).div(marginCallDuration));
         }
         return interest;
     }
 
     // Returns whether the collateralization is above the margin call ratio.
     // Adopted from: https://github.com/makerdao/sai/blob/0dd0a799e4746ac1955b67898762cff9b71aea17/src/tub.sol#L241
-    function safe() public view returns (bool) {
-        var pro = rmul(tub.tag(), tub.ink(cup));
-        var con = rmul(tub.vox.par(), tub.tab(cup));
-        var min = rmul(con, marginCallThreshold);
+    function safe() public returns (bool) {
+        uint pro = rmul(tub.tag(), tub.ink(cup));
+        uint con = rmul(tub.vox().par(), tub.tab(cup));
+        uint min = rmul(con, marginCallThreshold);
         return pro >= min;
     }
 
     // The difference between the total amount of collateral right now, 
-    function diffWithTargetCollateral() public view returns () {
-        var con = rmul(tub.vox.par(), tub.tab(cup));
-        var pro = rmul(tub.tag(), tub.ink(cup));
-        return con.sub(pro.div(targetCollateral));
+    function diffWithTargetCollateral() public returns (uint) {
+        uint con = rmul(tub.vox().par(), tub.tab(cup));
+        uint pro = rmul(tub.tag(), tub.ink(cup));
+        // TODO: is this actually the right unit to use??  You wound up
+        // with a ray number, but what you want is a DAI token count
+        return con.sub(rdiv(pro, targetCollateralization));
     }
 
 }
