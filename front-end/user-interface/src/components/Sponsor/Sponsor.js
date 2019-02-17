@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import SideBar from '../Sidebar';
+import WithdrawModal from './WithdrawModal';
+import DepositModal from './DepositModal';
+
 
 class Sponsor extends Component {
     constructor(props) {
@@ -10,7 +13,12 @@ class Sponsor extends Component {
         return ( 
             <div>
                 <SideBar />
-                
+                <div className=''>
+                <WithdrawModal />
+                </div>
+                <div className=''>
+                <DepositModal />
+                </div>
             </div>
          );
     }
