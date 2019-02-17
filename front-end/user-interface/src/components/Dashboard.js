@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from "react";
 import Maker from '@makerdao/dai';
+import * as web3Utils from "web3-utils";
 
 //components
 import SideBar from "./Sidebar";
@@ -61,27 +62,30 @@ class Dashboard extends Component {
     );
   }
 
-  async componentDidMount() {
+  createSafeCDP = async (targetCollateralization, marginCallThreshold, marginCallDuration, reward) => {
     let maker = await Maker.create('browser')
-    let proxy = maker.service('proxy').currentProxy()
+    await maker.authenticate()
+    let proxy = await maker.service('proxy').currentProxy()
     console.log("proxy:", proxy);
-    let safeCDPFactory = new window.web3.eth.Contract(require("../contracts/SafeCDPFactory.json"));
-    this.setState({
-      proxy: proxy,
-      maker: maker,
-      safeCDPFactory: safeCDPFactory,
-    })
-  }
 
-  createSafeCDP = (targetCollateralization, marginCallThreshold, marginCallDuration, reward) => {
-    let proxy = this.state.maker.service('proxy').currentProxy();
-    this.safeCDPFactory.createSafeCDP(
+    let contractJSON = require("../contracts/SafeCDPFactory.json")
+    const networkId = await window.web3.eth.net.getId()
+    const deployedAddress = contractJSON.networks[networkId].address
+    const safeCDPFactory = new window.web3.eth.Contract(contractJSON.abi, deployedAddress)
+
+    let account = (await window.web3.eth.getAccounts())[0]
+
+    console.log(window.web3.eth.accounts[0])
+    let safeCDPAddr = await safeCDPFactory.methods.createSafeCDP(
       proxy,
-      this.props.cdp,
+      web3Utils.fromAscii("3152"),
       targetCollateralization,
       marginCallThreshold,
       marginCallDuration,
-      reward)
+      reward).send({
+        "from": account,
+      })
+    console.log("safeCDPAddr:", safeCDPAddr)
   }
 }
 
