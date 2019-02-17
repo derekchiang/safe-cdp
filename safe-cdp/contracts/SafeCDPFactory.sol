@@ -84,15 +84,15 @@ contract SafeCDPFactory {
     // rewardForKeeper: the percentage of debt used to reward keepers and
     // sponsors for their service. E.g. 10
     function createSafeCDP(
-        address _owner,
+        address _proxy,
         bytes32 _cup,
         uint _targetCollateralization,
         uint _marginCallThreshold,
         uint _marginCallDuration,
         uint _rewardForKeeper) public returns (address) {
         SafeCDP cdp = new SafeCDP(
-            _owner,
             msg.sender,
+            _proxy,
             tubAddr,
             daiAddr,
             sponsorPoolAddr,
