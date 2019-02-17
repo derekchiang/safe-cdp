@@ -62,7 +62,7 @@ contract SafeCDPFactory {
     // Safe CDP List
     bytes32[] public safeCDPs;
 
-    function getSafeCDPs() external returns (bytes32[]) {
+    function getSafeCDPs() external view returns (bytes32[]) {
         return safeCDPs;
     }
 

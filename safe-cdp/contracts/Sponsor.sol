@@ -23,9 +23,13 @@ contract Sponsor is Ownable{
   uint8 public constant decimals = 18;
   //_tokens * (10 ** uint256(decimals))
 
-  //address tokenContractAddress = 0x46b6a419c0aF78c1b1f240334015A6DFBeF7f3F2; //DAI Kovan Contract
-  address tokenContractAddress = 0x692a70D2e424a56D2C6C27aA97D1a86395877b3A;
-  DaiToken contractToken = DaiToken(tokenContractAddress);
+  address tokenContractAddress;
+  DaiToken contractToken;
+
+  constructor(address _token) public {
+    tokenContractAddress = _token;
+    contractToken = DaiToken(tokenContractAddress);
+  }
 
   //Sponsor Contract Address: 0xbbf289d846208c16edc8474705c748aff07732db
   //My Address: 0xca35b7d915458ef540ade6068dfe2f44e8fa733c
