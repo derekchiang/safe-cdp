@@ -116,7 +116,7 @@ function CustomizedInputs(props) {
 
         <Input
           id="custom-css-standard-input"
-          onChange={props.inputHandler}
+          onChange={props.updateDepositAmount}
           name="PhoneNumber"
           classes={{
             underline: classes.cssUnderline
