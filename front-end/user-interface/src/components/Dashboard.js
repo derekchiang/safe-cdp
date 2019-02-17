@@ -75,22 +75,23 @@ class Dashboard extends Component {
 
     let account = (await window.web3.eth.getAccounts())[0]
 
-    console.log(window.web3.eth.accounts[0])
     safeCDPFactory.methods.createSafeCDP(
       proxy,
-      web3Utils.fromAscii("5011"),
+      web3Utils.numberToHex(window.cdp),
       targetCollateralization,
       marginCallThreshold,
       marginCallDuration,
       reward).send({
         "from": account,
-      }).on("receipt", (receipt) => {
+      }).on("receipt", async (receipt) => {
+        const saiProxy = maker.service('smartContract').getContractByName('SAI_PROXY');
         console.log("receipt:", receipt)
+        let safeCDPAddr = receipt.events.SafeCDPCreated.returnValues.cdp
+        console.log("safeCDPAddr:", safeCDPAddr)
+        const cdp = await maker.getCdp(parseInt(window.cdp))
+        console.log("cdp:", parseInt(window.cdp))
+        await saiProxy.give("0xa71937147b55deb8a530c7229c442fd3f31b7db2", web3Utils.numberToHex(window.cdp), safeCDPAddr)
       })
-    // console.log("safeCDPAddr:", safeCDPAddr)
-
-    // const cdp = await maker.getCdp(5011)
-    // await cdp.give(safeCDPAddr.returnValues[])
   }
 }
 
