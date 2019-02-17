@@ -20,7 +20,7 @@ const styles = {
     transform: "scale(0.8)"
   },
   title: {
-    fontSize: 15,
+    fontSize: 23,
     fontWeight: 600,
     color: "#95aac9",
     fontFamily: "Cerebri Sans, sans-serif",
@@ -63,7 +63,9 @@ function SimplerCard(props) {
           color="textSecondary">
           1 ETH
           </Typography>
-          
+          <div>
+            <br/> <br/>
+          </div>
       </CardContent>
       {/* <CardActions>
         <Button size="small">Learn More</Button>
