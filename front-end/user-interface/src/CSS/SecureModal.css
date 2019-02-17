@@ -2,5 +2,19 @@
     display: flex;
     position: absolute;
     top:3%;
+    right:27%;
+}
+
+.example-format2{
+    display: flex;
+    position: absolute;
+    top:3%;
+    right:18%;
+}
+
+.example-format3{
+    display: flex;
+    position: absolute;
+    top:4.1%;
     right:10%;
 }

@@ -13,10 +13,12 @@ import LiquidCard from "./LiquidCard";
 import EthereumCard from "./EthereumCard";
 import FAQ from "./FAQPanel";
 import SecureModal from "./SecureModal";
+import PaybackModal from "./PaybackModal";
 
 
 //css, images
 import "../CSS/Dashboard.css";
+import GiveupModal from "./GiveupModal";
 
 const NETWORK = "kovan"
 
@@ -32,6 +34,8 @@ class Dashboard extends Component {
           <SideBar className="clientNavSidebar" />
           <div className="dashboardContainer">
             <SecureModal onSubmit={this.createSafeCDP} />
+            <PaybackModal />
+            <GiveupModal />
             <CollateralRatio className="cardDivTop" />
             <div className="cardTopLeft">
               <DebtCard />
