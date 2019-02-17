@@ -131,6 +131,8 @@ contract Sponsor is Ownable{
   event newDeposit(address sponsor, uint depositAmount);
   event newWithdrawPrincipal(address sponsor, uint withdrawAmount);
   event newWithdrawInterest(address sponsor, uint withdrawAmount);
+  event debtReturnedToPool(address fromCDP, uint totalAmount);
+
 
   mapping (address => uint) public sponsorDepositBalance;
   mapping (address => uint32) public readyTime;
@@ -165,7 +167,6 @@ contract Sponsor is Ownable{
     sponsorDepositBalance[msg.sender] = sponsorDepositBalance[msg.sender].add(_depositAmount);
     emit newDeposit(msg.sender, _depositAmount);
     readyTime[msg.sender] = uint32(now + coolDownTime);
-    //isReady[msg.sender] = false;
   }
 
   function balanceOfContract() view external onlyOwner returns (uint) {
@@ -178,7 +179,7 @@ contract Sponsor is Ownable{
 
   //Sponsor withdraws the amount
   function withdraw() public {
-    //Example: 100 = totalInterest, from 10000 pool, sponsor deposited 1000
+    //CAUTION => Example: 100 = totalInterest, from 10000 pool, sponsor deposited 1000
     //100*1000/10000 = 10
     //Sponsor can withdraw 1010
     //After withdraw => totalInterest = 90, Pool = 9000, sponsor deposited = 0;
@@ -200,12 +201,17 @@ contract Sponsor is Ownable{
 
   //Keeper Allowance
   function approvePayment(uint _approvePaymentAmount) public onlySafeCDP {
-    tokenTransfer(msg.sender,_approvePaymentAmount);
+    uint contractBalance = contractToken.balanceOf(this);
+    require(contractBalance.sub(_approvePaymentAmount)>=0);
+    tokenApprove(msg.sender,_approvePaymentAmount);
   }
 
   function returnDebt(uint _principalAmount, uint _interestAmount) public onlySafeCDP {
+    uint totalPayment = _principalAmount + _interestAmount;
+    tokenTransferFrom(msg.sender,address(this),totalPayment);
     totalPrinciple = totalPrinciple.add(_principalAmount);
     totalInterest = totalInterest.add(_interestAmount);
+    emit debtReturnedToPool(msg.sender, totalPayment);
   }
 
   function changeCoolDownTime(uint _newCoolDownTime) public onlyOwner {
