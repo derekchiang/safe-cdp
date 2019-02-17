@@ -42,6 +42,7 @@ class SimpleCard extends React.Component {
     const safeCDPFactory = new window.web3.eth.Contract(contractJSON.abi, deployedAddress)
 
     // We are just getting the first one, which is wrong and hacky.
+    let account = (await window.web3.eth.getAccounts())[0]
     let safeCDPAddr = await safeCDPFactory.methods.userToSafeCDPs(account, 0).call()
     contractJSON = require("../../contracts/SafeCDP.json")
     const safeCDP = new window.web3.eth.Contract(contractJSON.abi, safeCDPAddr)
@@ -75,7 +76,7 @@ class SimpleCard extends React.Component {
 
           </CardContent>
           <CardActions>
-            <BalanceButton onClick=onClick />
+            <BalanceButton onClick={this.onClick} />
           </CardActions>
         </Card>
       </div>
