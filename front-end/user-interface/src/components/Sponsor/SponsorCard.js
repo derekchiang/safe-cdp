@@ -52,7 +52,7 @@ function SimplerCard(props) {
       </CardContent>
       {/* <CardActions>
         <Button size="small">Learn More</Button>
-      </CardActions> */}
+      </CardActions>as */}
     </Card>
   </div>
   );
