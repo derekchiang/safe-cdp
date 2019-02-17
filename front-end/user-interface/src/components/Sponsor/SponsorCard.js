@@ -72,8 +72,8 @@ class SponsorCard extends React.Component{
           Pool Details
         </Typography>
         <div>
-          <p>Pool's Total: {this.state.sponsorPoolBalance}</p>
-          <p>User's Total: {this.state.userPoolBalance}</p>
+          <p>Pool's Balance: {this.state.sponsorPoolBalance}</p>
+          <p>User's Principal Balance: {this.state.userPoolBalance}</p>
         </div>
       </CardContent>
       {/* <CardActions>

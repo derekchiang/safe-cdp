@@ -1,24 +1,24 @@
 /* using these styles in css will
-cause the cards to expand 
+cause the cards to expand
 offscreen forever */
 .dashboard {
     display: flex;
     overflow-x:hidden;
   }
-  
+
   .dashboard .dashboardContainer {
     margin: 0 auto 50px;
     width: 85%;
     position: relative;
     padding: 0 40px 0 20px;
   }
-  
+
   .dashboard .clientNavSidebar {
     width: 15%;
     height: 100vh;
     /* padding-left: 10px; */
   }
-  
+
   .dashboard .cardBottom {
     position: absolute;
     display: flex;
@@ -30,7 +30,7 @@ offscreen forever */
     bottom: 10%;
     left: 25%;
   }
-  
+
   .dashboard .cardBottom3 {
     position: absolute;
     display: flex;
@@ -85,39 +85,39 @@ offscreen forever */
     display: flex;
     margin-right:100px;
   }
-  
+
   .dashboard .cardTopLeft {
     position: absolute;
     width: 50%;
     height: 200px;
     padding: 15px 15px 30px;
   }
-  
+
   .dashboard .cardTopRight {
     position: absolute;
     width: 50%;
     left: 50%;
     height: 200px;
     padding: 15px 15px 30px;
-  } 
-  
+  }
+
   .dashboard .weddingInfo {
     display: flex;
     justify-content: space-between;
   }
-  
+
   .dashboard .invite-link {
     padding: 15px 15px 20px;
     margin: 30px 0;
   }
-  
+
   .dashboard .invite-link a {
     padding: 0;
     margin: 10px 0 0 0;
     font-size: inherit;
     text-transform: none;
   }
-  
+
   @media (max-width: 800px) {
     .dashboard {
       margin: 100px auto 50px;
@@ -125,50 +125,50 @@ offscreen forever */
       flex-direction: column;
       text-align: center;
     }
-  
+
     .dashboard .clientNavSidebar {
       display: none;
     }
-  
+
     .dashboard .dashboardContainer {
       margin: 0 auto;
       padding: 0;
     }
-  
+
     .dashboard .cardDivTop {
       flex-direction: column;
       width: 100%;
       margin: auto;
     }
-  
+
     .dashboard .registry {
       flex-direction: column;
       width: 100%;
     }
-  
+
     .dashboard .weddingInfo {
       flex-direction: column;
     }
-  
+
     .dashboard .cardTopLeft  {
       width: 100%;
       margin: 30px auto 0 auto;
     }
-  
+
     .dashboard .cardTopRight {
       width: 100%;
       margin-top: 30px ;
       margin-left: 0px ;
     }
   }
-  
-  
+
+
   @media (max-width: 600px) {
     .dashboard .dashboardContainer {
       width: 100%;
     }
   }
-  
+
   .loading{
       display: flex;
       flex-direction: column;
@@ -178,21 +178,21 @@ offscreen forever */
       position: relative;
       top: 150px;
   }
-  
+
   .chg-design:hover{
     text-decoration: unset;
   }
-  
+
   .chg-design:before{
     display: none;
   }
-  
+
   .drag-drop{
     position: relative;
     top:-40px;
     height:200px;
   }
-  
+
   .mobile-spread{
     position: relative;
     top:20px;
