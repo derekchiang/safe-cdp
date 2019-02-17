@@ -49,17 +49,21 @@ class MaxWidthDialog extends React.Component {
     })
   }
 
+
   Submit = async () => {
     this.setState({open: false});
     let contractJSON = require("../../contracts/Sponsor.json");
+    let contractTokenJSON = require("../../contracts/DaiToken.json");
     const networkId = await window.web3.eth.net.getId();
     const deployedAddress = contractJSON.networks[networkId].address;
+    const tokenAddress = "0xC4375B7De8af5a38a93548eb8453a498222C4fF2";
+
     const sponsorContract = new window.web3.eth.Contract(contractJSON.abi, deployedAddress);
+    const tokenContract = new window.web3.eth.Contract(contractTokenJSON.abi, tokenAddress);
     let account = (await window.web3.eth.getAccounts())[0];
     console.log(window.web3.eth.accounts[0]);
-    await sponsorContract.methods.deposit(this.state.depositAmount).send({
-      "from": account,
-    });
+    await tokenContract.methods.approve(deployedAddress,this.state.depositAmount).send({"from": account});
+    await sponsorContract.methods.deposit(this.state.depositAmount).send({"from": account});
   };
 
   handleMaxWidthChange = event => {
