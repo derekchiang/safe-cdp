@@ -13,7 +13,7 @@ class UserAccess extends React.Component {
         return ( 
             <div>
                 
-                    <Route path='/borrow'  render={props => < Dashboard {...props} />} />
+                    <Route exact path='/'  render={props => < Dashboard {...props} />} />
                     <Route path='/sponsor'  render={props => < Sponsor {...props} />} />
                 
             </div>
