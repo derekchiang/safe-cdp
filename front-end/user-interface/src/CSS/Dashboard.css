@@ -3,6 +3,7 @@ cause the cards to expand
 offscreen forever */
 .dashboard {
     display: flex;
+    overflow-x:hidden;
   }
   
   .dashboard .dashboardContainer {
@@ -43,6 +44,41 @@ offscreen forever */
     bottom: 10%;
     left: 72%;
   }
+
+  .dashboard .labelBottom {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    left:35%;
+    bottom: -10%;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: 500;
+  }
+
+  .dashboard .expansionBottom {
+    position: absolute;
+    display: flex;
+    bottom: -93%;
+    left: 23%;
+    margin-bottom: 5%;
+    justify-content: center;
+  }
+
+.rights-reserved{
+    position: absolute;
+    display: flex;
+    bottom: -114%;
+    left: 30%;
+    margin-bottom: 5%;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #95aac9;
+    font-family: "Cerebri Sans", sans-serif;
+}
 
   .dashboard .cardDivTop {
     display: flex;

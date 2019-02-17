@@ -7,6 +7,7 @@ import DebtCard from "./DebtCard";
 import CollateralCard from "./CollateralCard";
 import IDCard from "./IDCard";
 import FeesCard from "./FeesCard";
+import FAQ from "./FAQPanel";
 
 //css, images
 import "../CSS/Dashboard.css";
@@ -43,6 +44,11 @@ class Dashboard extends Component {
             <div className="cardBottom4">
                 <EthereumCard />
             </div>
+            <span className="labelBottom">Borrow FAQs</span>
+            <div className="expansionBottom">
+                <FAQ />
+            </div>
+            <span className="rights-reserved">@ 2019 SafeCDP. All rights reserved.</span>
           </div>
         </Fragment>
       </div>
