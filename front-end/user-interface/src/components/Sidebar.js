@@ -97,7 +97,7 @@ export default class SideBar extends React.Component {
                   <Icon icon={users} />
                 </IconCnt>
             </Link>
-                <Text>Users</Text>
+                <Text>Sponsor</Text>
               </Nav>
             <Nav id="3">
               <IconCnt>

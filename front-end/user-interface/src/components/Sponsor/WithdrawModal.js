@@ -7,7 +7,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import WithdrawButton from '../../buttons/WithdrawButton';
 import WithdrawForm from './WithdrawForm';
-import '../../CSS/SecureModal.css';
+import '../../CSS/Sponsor.css';
 
 const styles = theme => ({
   form: {
@@ -57,7 +57,7 @@ class MaxWidthDialog extends React.Component {
 
     return (
       <React.Fragment>
-        <div variant="outlined" color="primary" onClick={this.handleClickOpen} className='example-format'>
+        <div variant="outlined" color="primary" onClick={this.handleClickOpen} className='withdraw'>
           <WithdrawButton />
         </div>
         <Dialog
