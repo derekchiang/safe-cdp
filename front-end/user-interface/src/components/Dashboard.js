@@ -27,6 +27,7 @@ class Dashboard extends Component {
         <Fragment>
           <SideBar className="clientNavSidebar" />
           <div className="dashboardContainer">
+          
           <SecureModal />
             <CollateralRatio className="cardDivTop" />
             <div className="cardTopLeft">

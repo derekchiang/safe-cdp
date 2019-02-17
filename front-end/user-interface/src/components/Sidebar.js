@@ -84,7 +84,7 @@ export default class SideBar extends React.Component {
               <img src={logo} alt="SafeCDP logo" width="200" />
             </IconCnt>
               <Nav id="1">
-           <Link to='/'>
+           <Link to='/dashboard'>
                 <IconCnt>
                   <Icon icon={dashboard} />
                 </IconCnt>
