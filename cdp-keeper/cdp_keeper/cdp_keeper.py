@@ -29,12 +29,15 @@ from pymaker.lifecycle import Lifecycle
 from pymaker.numeric import Wad, Ray
 from pymaker.sai import Tub
 from pymaker.token import ERC20Token
-from pymaker.util import eth_balance, chain
-
+from pymaker.util import eth_balance, chain, bytes_to_int, int_to_bytes32
+import os
 
 class CdpKeeper:
     """Keeper to actively manage open CDPs."""
+
     logger = logging.getLogger('cdp-keeper')
+
+    marginCalled = {}
 
 
     def __init__(self, args: list, **kwargs):
@@ -80,7 +83,7 @@ class CdpKeeper:
         with Lifecycle(self.web3) as lifecycle:
             lifecycle.on_startup(self.startup)
             # Checks the cups every 30 seconds instead of looking across all of them
-            lifecycle.every(17, self.check_all_cups)
+            lifecycle.every(60, self.check_all_cups)
             # lifecycle.on_block(self.check_all_cups)
 
     def startup(self):
@@ -88,7 +91,10 @@ class CdpKeeper:
         if self.safefactoryaddress:
             abi = Contract._load_abi(__name__, 'safecdp_abi/safecdpfactory.json')
             contract = ConciseContract(self.web3.eth.contract(address=Web3.toChecksumAddress(self.safefactoryaddress), abi=abi))
-            self.monitored_cups = contract.getSafeCDPs()
+            try:
+                self.monitored_cups = [int.from_bytes(i, byteorder='big', signed=False) for i in contract.getSafeCDPs()]
+            except Exception as e:
+                self.monitored_cups = [int(str(i).split('\\')[0][2:]) for i in contract.getSafeCDPs()]
         elif self.monitored_cdps:
             self.monitored_cups = self.monitored_cdps
         else:
@@ -102,6 +108,13 @@ class CdpKeeper:
         self.tub.approve(directly(gas_price=self.gas_price(), from_address = self.sending_account))
 
     def check_all_cups(self):
+        self.logger.info("Checking all cups")
+        abi = Contract._load_abi(__name__, 'safecdp_abi/safecdpfactory.json')
+        contract = ConciseContract(self.web3.eth.contract(address=Web3.toChecksumAddress(self.safefactoryaddress), abi=abi))
+        try:
+            self.monitored_cups = [int.from_bytes(i, byteorder='big', signed=False) for i in contract.getSafeCDPs()]
+        except Exception as e:
+            self.monitored_cups = [int(str(i).split('\\')[0][2:]) for i in contract.getSafeCDPs()]
         for id in self.monitored_cups:
             self.check_cup(int(id))
 
@@ -114,22 +127,29 @@ class CdpKeeper:
         # than `--max-sai`.
         if (self.safefactoryaddress):
             cup = self.tub.cups(cup_id)
-            self.margincall(cup.lad.address)
-        elif self.is_undercollateralized(cup_id) and self.sai.balance_of(self.our_address) > self.max_sai:
+            abi = Contract._load_abi(__name__, 'safecdp_abi/safecdpfactory.json')
+            contract = ConciseContract(self.web3.eth.contract(address=Web3.toChecksumAddress(self.safefactoryaddress), abi=abi))
+            big = int_to_bytes32(cup_id)
+            safeCDP = contract.cdpToSafeCDP(big)
+            self.margincall(safeCDP)
+
+            # sending ethereum address to server
+        if self.is_undercollateralized(cup_id) and self.sai.balance_of(self.our_address) > self.max_sai:
             self.logger.info("Found an undercollateralized cup")
             # send a margin call since using safeCDPs that are being monitored
         else:
             self.logger.info("keep going")
 
-    def margincall(self, safeCDPAddress):
-        abi = Contract._load_abi(__name__, 'safecdp_abi/safecdp.json')
-        contract = self.web3.eth.contract(address=Web3.toChecksumAddress(safeCDPAddress), abi=abi)
-        trxn_count = self.web3.eth.getTransactionCount(Web3.toChecksumAddress(self.sending_account))
-        trxn = contract.functions.marginCall().buildTransaction({'from': Web3.toChecksumAddress(self.sending_account), 'nonce': trxn_count, 'value': 0})
-        signed = self.web3.eth.account.signTransaction(trxn, )
-        trxn_hash = self.web3.eth.sendRawTransaction(signed.rawTransaction).hex()
-        self.logger.info("Trxn_hash for margincall {}".format(trxn_hash))
 
+    def margincall(self, safeCDPAddress):
+        if ((safeCDPAddress != '0x0000000000000000000000000000000000000000') and not (self.is_safe(safeCDPAddress))):
+            abi = Contract._load_abi(__name__, 'safecdp_abi/safecdp.json')
+            contract = self.web3.eth.contract(address=Web3.toChecksumAddress(safeCDPAddress), abi=abi)
+            trxn_count = self.web3.eth.getTransactionCount(Web3.toChecksumAddress(self.sending_account.address))
+            trxn = contract.functions.marginCall().buildTransaction({'from': Web3.toChecksumAddress(self.sending_account.address), 'nonce': trxn_count, 'value': 0, 'gas': 500000})
+            signed = self.web3.eth.account.signTransaction(trxn, os.env['PRIVKEY'])
+            trxn_hash = self.web3.eth.sendRawTransaction(signed.rawTransaction).hex()
+            self.logger.info("Trxn_hash for margincall {}".format(trxn_hash))
 
     def our_cups(self):
         # stopping at the first cup found
@@ -151,9 +171,13 @@ class CdpKeeper:
             return False
 
     def is_safe(self, safeCDPAddress):
-        abi = Contract._load_abi(__name__, 'safecdp_abi/safecdp.json')
-        contract = ConciseContract(contract = self.web3.eth.contract(address=Web3.toChecksumAddress(safeCDPAddress), abi=abi))
-        return contract.safe()
+        try:
+            abi = Contract._load_abi(__name__, 'safecdp_abi/safecdp.json')
+            contract = ConciseContract(self.web3.eth.contract(address=Web3.toChecksumAddress(safeCDPAddress), abi=abi))
+            return (contract.safe())
+        except Exception as e:
+            print(e)
+            return True
 
     def calculate_sai_wipe(self) -> Wad:
         """Calculates the amount of SAI that can be wiped.
