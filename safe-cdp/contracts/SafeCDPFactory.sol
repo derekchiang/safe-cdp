@@ -128,15 +128,15 @@ contract SafeCDP is DSMath {
     event MarginCallInvoked(uint id, address keeper, uint amount, uint time);
     event MarginCallsResponded(uint[] marginCallIDs);
 
-    address owner;
-    address proxy;
+    address public owner;
+    address public proxy;
     // tub is the global cdp record store
     // https://github.com/makerdao/sai/blob/master/DEVELOPING.md
     TubInterface tub;
     TokenInterface dai;
     SponsorPoolInterface sponsorPool;
 
-    bytes32 cup;
+    bytes32 public cup;
 
     // The unit of target collateralization and margin call threshold is the
     // same as the unit for liquidation ratio in the SAI contracts, which are
