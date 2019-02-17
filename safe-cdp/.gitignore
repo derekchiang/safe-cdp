@@ -16,3 +16,4 @@ config/test/contracts.json
 build
 dist
 test/data
+.secret
