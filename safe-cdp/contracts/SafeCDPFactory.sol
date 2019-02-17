@@ -209,7 +209,13 @@ contract SafeCDP is DSMath {
             uint interestForPool = interest.sub(interestForKeeper);
 
             owedToKeeper[keeper] = owedToKeeper[keeper].add(interestForKeeper);
-            dai.approve(keeper, owedToKeeper[keeper]);
+            // TODO: we shouldn't actually transfer here because the keeper
+            // may be a smart contract and this can be a security flaw.
+            // Rather we should just approve() and let the keeper claim the
+            // reward.
+            // However we didn't have time to implement the logic for the keeper
+            // to claim rewards, so we are doing this for now.
+            dai.transfer(keeper, owedToKeeper[keeper]);
 
             totalPrincipal = totalPrincipal.add(principal);
             totalInterest = totalInterest.add(interest);
@@ -266,11 +272,19 @@ contract SafeCDP is DSMath {
 
     // The difference between the total amount of collateral right now, 
     function diffWithTargetCollateral() public returns (uint) {
-        uint con = rmul(tub.vox().par(), tub.tab(cup));
-        uint pro = rmul(tub.tag(), tub.ink(cup));
+        uint con = rmul(tub.vox().par(), wadToRay(tub.tab(cup)));
+        uint pro = rmul(tub.tag(), wadToRay(tub.ink(cup)));
         // TODO: is this actually the right unit to use??  You wound up
         // with a ray number, but what you want is a DAI token count
-        return con.sub(rdiv(pro, targetCollateralization));
+        return rayToWad(con.sub(rdiv(pro, targetCollateralization)));
+    }
+
+    function wadToRay(uint wad) public returns (uint) {
+        return wad * (RAY/WAD);
+    }
+
+    function rayToWad(uint ray) public returns (uint) {
+        return ray / (RAY/WAD);
     }
 
 }
