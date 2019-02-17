@@ -102,7 +102,7 @@ class MaxWidthDialog extends React.Component {
           aria-labelledby="max-width-dialog-title"
         >
           <DialogContent>
-            Payback all funds?
+            Payback all borrowed funds?
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="primary">
