@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from "react";
 import Maker from '@makerdao/dai';
 import * as web3Utils from "web3-utils";
+import { utils as ethersUtils } from 'ethers';
 
 //components
 import SideBar from "./Sidebar";
@@ -19,6 +20,11 @@ import SecureModal from "./SecureModal";
 import "../CSS/Dashboard.css";
 
 const NETWORK = "kovan"
+
+function numberToBytes32(num) {
+  const bn = ethersUtils.bigNumberify(num);
+  return ethersUtils.hexlify(ethersUtils.padZeros(bn, 32));
+}
 
 class Dashboard extends Component {
   constructor(props) {
@@ -77,7 +83,7 @@ class Dashboard extends Component {
 
     safeCDPFactory.methods.createSafeCDP(
       proxy,
-      web3Utils.numberToHex(window.cdp),
+      numberToBytes32(parseInt(window.cdp)),
       targetCollateralization,
       marginCallThreshold,
       marginCallDuration,
