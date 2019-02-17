@@ -1,55 +1,83 @@
-import React, { Component } from "react";
-import Rodal from "rodal";
-import { Form, Text } from "informed";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import SecureCDPButton from '../buttons/SecureCDPButton';
+import '../CSS/SecureModal.css';
 
-// include styles
-import "rodal/lib/rodal.css";
+const styles = theme => ({
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    margin: 'auto',
+    width: 'fit-content',
+  },
+  formControl: {
+    marginTop: theme.spacing.unit * 2,
+    minWidth: 120,
+  },
+  formControlLabel: {
+    marginTop: theme.spacing.unit,
+  },
+});
 
-export default class SecureModal extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { visible: false };
-  }
+class MaxWidthDialog extends React.Component {
+  state = {
+    open: false,
+    fullWidth: true,
+    maxWidth: 'md',
+  };
 
-  show() {
-    this.setState({ visible: true });
-  }
+  handleClickOpen = () => {
+    this.setState({ open: true });
+  };
 
-  hide() {
-    this.setState({ visible: false });
-  }
+  handleClose = () => {
+    this.setState({ open: false });
+  };
+
+  handleMaxWidthChange = event => {
+    this.setState({ maxWidth: event.target.value });
+  };
+
+  handleFullWidthChange = event => {
+    this.setState({ fullWidth: event.target.checked });
+  };
 
   render() {
-    return (
-      <div>
-        <button onClick={this.show.bind(this)}>SECURE CDP</button>
+    const { classes } = this.props;
 
-        <Rodal visible={this.state.visible} onClose={this.hide.bind(this)}>
-          <Form>
-            <label>
-              Target Collateralization:
-              <Text field="Target Collateralization" type="number" />
-            </label>
-            <label>
-              Margin Call Threshold:
-              <Text field="Margin Call Threshold" type="number" />
-            </label>
-            <label>
-              Margin Call Duration:
-              <Text field="Margin Call Duration" type="number" />
-            </label>
-            <label>
-              Reward:
-              <Text field="Reward" type="number" />
-            </label>
-            <label>
-              Phone #:
-              <Text field="Phone #" type="number" />
-            </label>
-            <button type="submit">Secure</button>
-          </Form>
-        </Rodal>
-      </div>
+    return (
+      <React.Fragment>
+        <div variant="outlined" color="primary" onClick={this.handleClickOpen} className='example-format'>
+          <SecureCDPButton />
+        </div>
+        <Dialog
+          fullWidth={this.state.fullWidth}
+          maxWidth={this.state.maxWidth}
+          open={this.state.open}
+          onClose={this.handleClose}
+          aria-labelledby="max-width-dialog-title"
+        >
+          <DialogContent>
+            content
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} color="primary">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </React.Fragment>
     );
   }
 }
+
+MaxWidthDialog.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(MaxWidthDialog);

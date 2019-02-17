@@ -12,6 +12,7 @@ import EthereumCard from "./EthereumCard";
 import FAQ from "./FAQPanel";
 import SecureModal from "./SecureModal";
 
+
 //css, images
 import "../CSS/Dashboard.css";
 
@@ -25,8 +26,8 @@ class Dashboard extends Component {
       <div className="dashboard">
         <Fragment>
           <SideBar className="clientNavSidebar" />
-            <SecureModal />
           <div className="dashboardContainer">
+          <SecureModal />
             <CollateralRatio className="cardDivTop" />
             <div className="cardTopLeft">
               <DebtCard />
