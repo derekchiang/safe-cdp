@@ -1,4 +1,6 @@
 import React, { Component, Fragment } from "react";
+import Maker from '@makerdao/dai';
+
 
 //components
 import SideBar from "./Sidebar";
@@ -16,6 +18,8 @@ import SecureModal from "./SecureModal";
 //css, images
 import "../CSS/Dashboard.css";
 
+const NETWORK = "kovan"
+
 class Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -27,7 +31,7 @@ class Dashboard extends Component {
         <Fragment>
           <SideBar className="clientNavSidebar" />
           <div className="dashboardContainer">
-          <SecureModal />
+            <SecureModal onSubmit={this.createSafeCDP} />
             <CollateralRatio className="cardDivTop" />
             <div className="cardTopLeft">
               <DebtCard />
@@ -39,23 +43,38 @@ class Dashboard extends Component {
               <IDCard />
             </div>
             <div className="cardBottom2">
-                <FeesCard />
+              <FeesCard />
             </div>
             <div className="cardBottom3">
-                <LiquidCard />
+              <LiquidCard />
             </div>
             <div className="cardBottom4">
-                <EthereumCard />
+              <EthereumCard />
             </div>
             <span className="labelBottom">Borrow FAQs</span>
             <div className="expansionBottom">
-                <FAQ />
+              <FAQ />
             </div>
             <span className="rights-reserved">@ 2019 SafeCDP. All rights reserved.</span>
           </div>
         </Fragment>
       </div>
     );
+  }
+
+  async componentDidMount() {
+    let maker = await Maker.create('browser')
+    let proxy = maker.service('proxy').currentProxy()
+    console.log("proxy", proxy);
+    this.setState({
+      proxy: proxy,
+      maker: maker,
+    })
+  }
+
+  createSafeCDP = (targetCollateralization, marginCallThreshold, marginCallDuration, reward) => {
+    let proxy = this.state.maker.service('proxy').currentProxy();
+    this.safeCDPFactory.createSafeCDP(proxy)
   }
 }
 
