@@ -9,6 +9,7 @@ import DepositButton from '../../buttons/DepositButton';
 import InvestForm from './InvestForm';
 import '../../CSS/Sponsor.css';
 import web3 from '../../utilities/web3provider.js'
+import * as web3Utils from 'web3-utils';
 
 const styles = theme => ({
   form: {
@@ -31,6 +32,7 @@ class MaxWidthDialog extends React.Component {
     open: false,
     fullWidth: true,
     maxWidth: 'md',
+    depositAmount: '',
   };
 
   handleClickOpen = () => {
@@ -41,10 +43,28 @@ class MaxWidthDialog extends React.Component {
     this.setState({ open: false });
   };
 
-  Submit = () => {
-    this.setState({open: false});
-
+  updateDepositAmount = (ev) => {
+    this.setState({
+      depositAmount: web3Utils.toBN(ev.target.value).mul(web3Utils.toBN(10).pow(web3Utils.toBN(18)))
+    })
   }
+
+
+  Submit = async () => {
+    this.setState({open: false});
+    let contractJSON = require("../../contracts/Sponsor.json");
+    let contractTokenJSON = require("../../contracts/DaiToken.json");
+    const networkId = await window.web3.eth.net.getId();
+    const deployedAddress = contractJSON.networks[networkId].address;
+    const tokenAddress = "0xC4375B7De8af5a38a93548eb8453a498222C4fF2";
+
+    const sponsorContract = new window.web3.eth.Contract(contractJSON.abi, deployedAddress);
+    const tokenContract = new window.web3.eth.Contract(contractTokenJSON.abi, tokenAddress);
+    let account = (await window.web3.eth.getAccounts())[0];
+    console.log(window.web3.eth.accounts[0]);
+    await tokenContract.methods.approve(deployedAddress,this.state.depositAmount).send({"from": account});
+    await sponsorContract.methods.deposit(this.state.depositAmount).send({"from": account});
+  };
 
   handleMaxWidthChange = event => {
     this.setState({ maxWidth: event.target.value });
@@ -71,7 +91,9 @@ class MaxWidthDialog extends React.Component {
         >
           <DialogContent>
               Enter quantity of Dai you would like to invest
-            <InvestForm />
+            <InvestForm
+            updateDepositAmount={this.updateDepositAmount}
+            />
           </DialogContent>
           <DialogActions>
             <Button onClick={this.Submit} color="primary">
