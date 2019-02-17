@@ -1,5 +1,22 @@
 .img{
     position: relative;
     left:86%;
-    top:-30px;
+    top:-40px;
+}
+
+.circle-status{
+    position: relative;
+    left:55%;
+    top:-125px;
+    height:20px;
+    width:20px;
+}
+
+.hours-left{
+    position: relative;
+    left:78%;
+    font-size:1rem;
+    font-weight: 600;
+    color:#95aac9;
+    font-family: "Cerebri Sans", sans-serif;
 }

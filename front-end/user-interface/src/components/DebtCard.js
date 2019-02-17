@@ -7,6 +7,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import dailogo from '../assets/imgs/dailogo.jpg';
 import '../CSS/CollateralCard.css';
+import CircleStatus from "./CircleStatus";
 
 
 const styles = {
@@ -21,7 +22,7 @@ const styles = {
     transform: "scale(0.8)"
   },
   title: {
-    fontSize: 15,
+    fontSize: 23,
     fontWeight: 600,
     color: "#95aac9",
     fontFamily: "Cerebri Sans, sans-serif",
@@ -63,6 +64,8 @@ function SimpleCard(props) {
           color="textSecondary">
           60 DAI
           </Typography>
+        <CircleStatus />
+        <span className='hours-left'>48.24 hours left</span>
       </CardContent>
       {/* <CardActions>
         <Button size="small">Learn More</Button>
