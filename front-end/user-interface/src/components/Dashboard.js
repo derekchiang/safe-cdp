@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from "react";
 import Maker from '@makerdao/dai';
+import Web3 from "web3";
 
 
 //components
@@ -63,18 +64,38 @@ class Dashboard extends Component {
   }
 
   async componentDidMount() {
+    if (window.ethereum) {
+      window.web3 = new Web3(window.ethereum);
+      try {
+        await window.ethereum.enable();
+      } catch (error) {
+        // User denied account access...
+      }
+    } else if (window.web3) {
+      window.web3 = new Web3(window.web3.currentProvider);
+    } else {
+      console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+    }
     let maker = await Maker.create('browser')
     let proxy = maker.service('proxy').currentProxy()
-    console.log("proxy", proxy);
+    console.log("proxy:", proxy);
+    let safeCDPFactory = new window.web3.eth.Contract(require("../contracts/SafeCDPFactory.json"));
     this.setState({
       proxy: proxy,
       maker: maker,
+      safeCDPFactory: safeCDPFactory,
     })
   }
 
   createSafeCDP = (targetCollateralization, marginCallThreshold, marginCallDuration, reward) => {
     let proxy = this.state.maker.service('proxy').currentProxy();
-    this.safeCDPFactory.createSafeCDP(proxy)
+    this.safeCDPFactory.createSafeCDP(
+      proxy,
+      this.props.cdp,
+      targetCollateralization,
+      marginCallThreshold,
+      marginCallDuration,
+      reward)
   }
 }
 
