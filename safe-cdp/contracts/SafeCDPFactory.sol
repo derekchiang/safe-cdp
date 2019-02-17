@@ -55,6 +55,8 @@ contract SponsorPoolInterface {
 }
 
 contract SafeCDPFactory {
+    event SafeCDPCreated (address cdp);
+
     // Map from user address to the Safe CDPs they own
     mapping(address => address[]) public userToSafeCDPs;
     // A set of all Safe CDPs ever created
@@ -108,6 +110,7 @@ contract SafeCDPFactory {
         userToSafeCDPs[msg.sender].push(address(cdp));
         safeCDPSet[address(cdp)] = true;
         safeCDPs.push(_cup);
+        emit SafeCDPCreated(address(cdp));
         return cdp;
     }
 }

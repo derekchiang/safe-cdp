@@ -22,13 +22,11 @@ const styles = theme => ({
 
 class SearchId extends React.Component {
   state = {
-   
+
   };
 
-  handleChange = name => event => {
-    this.setState({
-      [name]: event.target.value
-    });
+  handleChange = ev => {
+    window.cdp = ev.target.value
   };
 
   render() {
@@ -43,6 +41,7 @@ class SearchId extends React.Component {
           className={classes.textField}
           margin="normal"
           variant="outlined"
+          onChange={this.handleChange}
         />
       </form>
     );
