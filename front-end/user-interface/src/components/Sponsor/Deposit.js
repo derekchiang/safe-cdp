@@ -1,7 +1,4 @@
-import React, { Component } from 'react';
-import SideBar from './Sidebar';
-
-class Sponsor extends Component {
+class Deposit extends Component {
     constructor(props) {
         super(props);
         this.state = {  }
@@ -9,10 +6,10 @@ class Sponsor extends Component {
     render() { 
         return ( 
             <div>
-                <SideBar />
+                
             </div>
          );
     }
 }
  
-export default Sponsor;
+export default Deposit;

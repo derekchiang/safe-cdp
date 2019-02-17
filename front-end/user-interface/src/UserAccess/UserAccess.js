@@ -1,8 +1,8 @@
 import React from 'react';
 import Dashboard from '../components/Dashboard';
-import Sponsor from '../components/Sponsor';
+import Sponsor from '../components/Sponsor/Sponsor';
 import { Route, Switch, Redirect } from 'react-router-dom';
-import SideBar from '../components/Sidebar';
+
 
 class UserAccess extends React.Component {
     constructor(props) {

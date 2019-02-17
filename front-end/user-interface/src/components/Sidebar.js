@@ -15,7 +15,7 @@ import { cubes } from "react-icons-kit/fa/cubes";
 import { circleO } from "react-icons-kit/fa/circleO";
 import logo from "../assets/imgs/SafeCDPlogo.svg";
 import Dashboard from "./Dashboard";
-import Sponsor from "./Sponsor";
+import Sponsor from "./Sponsor/Sponsor";
 
 const AppContainer = styled(BaseAppContainer)`
   height: calc(100vh - 40px);
