@@ -31,6 +31,7 @@ from pymaker.sai import Tub
 from pymaker.token import ERC20Token
 from pymaker.util import eth_balance, chain, bytes_to_int, int_to_bytes32
 import os
+import requests
 
 class CdpKeeper:
     """Keeper to actively manage open CDPs."""
@@ -38,6 +39,7 @@ class CdpKeeper:
     logger = logging.getLogger('cdp-keeper')
 
     marginCalled = {}
+    sendText = False
 
 
     def __init__(self, args: list, **kwargs):
@@ -132,7 +134,9 @@ class CdpKeeper:
             big = int_to_bytes32(cup_id)
             safeCDP = contract.cdpToSafeCDP(big)
             self.margincall(safeCDP)
-
+            ETHADDRESSOFUSER = contract.safeCDPToUser(safeCDP)
+            if sendText:
+                requests.get('https://fathomless-woodland-33317.herokuapp.com/sms/' + ETHADDRESSOFUSER)
             # sending ethereum address to server
         if self.is_undercollateralized(cup_id) and self.sai.balance_of(self.our_address) > self.max_sai:
             self.logger.info("Found an undercollateralized cup")
@@ -150,6 +154,8 @@ class CdpKeeper:
             signed = self.web3.eth.account.signTransaction(trxn, os.env['PRIVKEY'])
             trxn_hash = self.web3.eth.sendRawTransaction(signed.rawTransaction).hex()
             self.logger.info("Trxn_hash for margincall {}".format(trxn_hash))
+
+
 
     def our_cups(self):
         # stopping at the first cup found
