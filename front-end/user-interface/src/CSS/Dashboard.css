@@ -3,6 +3,7 @@ cause the cards to expand
 offscreen forever */
 .dashboard {
     display: flex;
+    overflow-x:hidden;
   }
   
   .dashboard .dashboardContainer {
@@ -18,27 +19,83 @@ offscreen forever */
     /* padding-left: 10px; */
   }
   
-  .dashboard .registry {
-    margin-top: 30px;
-    min-height: 200px;
-    padding: 15px;
+  .dashboard .cardBottom {
+    position: absolute;
     display: flex;
+    bottom: 10%;
+  }
+  .dashboard .cardBottom2 {
+    position: absolute;
+    display: flex;
+    bottom: 10%;
+    left: 25%;
   }
   
+  .dashboard .cardBottom3 {
+    position: absolute;
+    display: flex;
+    bottom: 10%;
+    left: 48.5%;
+  }
+
+  .dashboard .cardBottom4 {
+    position: absolute;
+    display: flex;
+    bottom: 10%;
+    left: 72%;
+  }
+
+  .dashboard .labelBottom {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    left:35%;
+    bottom: -10%;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: 500;
+  }
+
+  .dashboard .expansionBottom {
+    position: absolute;
+    display: flex;
+    bottom: -93%;
+    left: 23%;
+    margin-bottom: 5%;
+    justify-content: center;
+  }
+
+.rights-reserved{
+    position: absolute;
+    display: flex;
+    bottom: -114%;
+    left: 30%;
+    margin-bottom: 5%;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #95aac9;
+    font-family: "Cerebri Sans", sans-serif;
+}
+
   .dashboard .cardDivTop {
     display: flex;
+    margin-right:100px;
   }
   
   .dashboard .cardTopLeft {
+    position: absolute;
     width: 50%;
-    margin-right: 10px;
     height: 200px;
     padding: 15px 15px 30px;
   }
   
   .dashboard .cardTopRight {
+    position: absolute;
     width: 50%;
-    margin-left: 10px;
+    left: 50%;
     height: 200px;
     padding: 15px 15px 30px;
   } 
