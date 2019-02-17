@@ -84,12 +84,15 @@ contract SafeCDPFactory {
     // rewardForKeeper: the percentage of debt used to reward keepers and
     // sponsors for their service. E.g. 10
     function createSafeCDP(
+        address _owner,
         bytes32 _cup,
         uint _targetCollateralization,
         uint _marginCallThreshold,
         uint _marginCallDuration,
         uint _rewardForKeeper) public returns (address) {
         SafeCDP cdp = new SafeCDP(
+            _owner,
+            msg.sender,
             tubAddr,
             daiAddr,
             sponsorPoolAddr,
@@ -120,6 +123,8 @@ contract SafeCDP is DSMath {
     event MarginCallInvoked(uint id, address keeper, uint amount, uint time);
     event MarginCallsResponded(uint[] marginCallIDs);
 
+    address owner;
+    address proxy;
     // tub is the global cdp record store
     // https://github.com/makerdao/sai/blob/master/DEVELOPING.md
     TubInterface tub;
@@ -152,6 +157,8 @@ contract SafeCDP is DSMath {
     mapping(address => uint) owedToKeeper;
 
     constructor(
+        address _owner,
+        address _proxy,
         address _tubAddr,
         address _daiAddr,
         address _sponsorPoolAddr,
@@ -161,6 +168,8 @@ contract SafeCDP is DSMath {
         uint _marginCallDuration,
         uint _rewardForKeeper) public {
 
+        owner = _owner;
+        proxy = _proxy;
         tub = TubInterface(_tubAddr);
         dai = TokenInterface(_daiAddr);
         sponsorPool = SponsorPoolInterface(_sponsorPoolAddr);
@@ -187,7 +196,7 @@ contract SafeCDP is DSMath {
         return mc.id;
     }
 
-    function withdrawOwedCollateral() public {
+    function withdrawOwedCollateral() public pure {
         // TODO
     }
 
@@ -282,12 +291,21 @@ contract SafeCDP is DSMath {
         return rayToWad(con.sub(rdiv(pro, targetCollateralization)));
     }
 
-    function wadToRay(uint wad) public returns (uint) {
+    function wadToRay(uint wad) public pure returns (uint) {
         return wad * (RAY/WAD);
     }
 
-    function rayToWad(uint ray) public returns (uint) {
+    function rayToWad(uint ray) public pure returns (uint) {
         return ray / (RAY/WAD);
+    }
+
+    // Give the CDP back to the original owner
+    function relinquish() public {
+        require(msg.sender == owner, "Only owner can relinquish CDP");
+        require(totalAccuredDebt() == 0, "Cannot relinquishi CDP until all debt has been accounted for.");
+        // We wanna return the CDP to the proxy.
+        tub.give(cup, proxy);
+        selfdestruct(owner);
     }
 
 }
