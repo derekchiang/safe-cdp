@@ -1,4 +1,5 @@
 import React from "react";
+import { Route, Link } from "react-router-dom";
 import { SideNav, Nav as BaseNav } from "react-sidenav";
 import styled from "styled-components";
 import {
@@ -13,6 +14,8 @@ import { shoppingCart } from "react-icons-kit/fa/shoppingCart";
 import { cubes } from "react-icons-kit/fa/cubes";
 import { circleO } from "react-icons-kit/fa/circleO";
 import logo from "../assets/imgs/SafeCDPlogo.svg";
+import Dashboard from "./Dashboard";
+import Sponsor from "./Sponsor";
 
 const AppContainer = styled(BaseAppContainer)`
   height: calc(100vh - 40px);
@@ -32,7 +35,7 @@ const IconCnt = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height:55px;
+  height: 55px;
 `;
 
 const Nav = styled(BaseNav)`
@@ -46,11 +49,10 @@ const theme = {
 };
 
 const Text = styled.div`
-  font-size: 0.70em;
+  font-size: 0.7em;
   /* text-transform: uppercase; */
   font-family: "Roboto";
 `;
-
 
 const Icon = props => <BaseIcon size={32} icon={props.icon} />;
 
@@ -63,6 +65,7 @@ export default class SideBar extends React.Component {
 
   render() {
     return (
+      <div>
       <AppContainer>
         <Navigation>
           <SideNav
@@ -70,21 +73,32 @@ export default class SideBar extends React.Component {
             theme={theme}
             onItemSelection={this.onItemSelection}
           >
-              <IconCnt style={{height:100, borderBottom: '1.5px solid #EDF2F9', width:'85%', margin:'0 auto'}}>
-                <img src={logo} alt="SafeCDP logo" width="200"/>
-              </IconCnt>
-            <Nav id="1">
-              <IconCnt>
-                <Icon icon={dashboard} />
-              </IconCnt>
-              <Text>Dashboard</Text>
-            </Nav>
-            <Nav id="2">
-              <IconCnt>
-                <Icon icon={users} />
-              </IconCnt>
-              <Text>Users</Text>
-            </Nav>
+            <IconCnt
+              style={{
+                height: 100,
+                borderBottom: "1.5px solid #EDF2F9",
+                width: "85%",
+                margin: "0 auto"
+              }}
+            >
+              <img src={logo} alt="SafeCDP logo" width="200" />
+            </IconCnt>
+              <Nav id="1">
+           <Link to='/borrow'>
+                <IconCnt>
+                  <Icon icon={dashboard} />
+                </IconCnt>
+           </Link>
+                <Text>Dashboard</Text>
+              </Nav>
+              <Nav id="2">
+           <Link to='/sponsor'>
+                <IconCnt>
+                  <Icon icon={users} />
+                </IconCnt>
+            </Link>
+                <Text>Users</Text>
+              </Nav>
             <Nav id="3">
               <IconCnt>
                 <Icon icon={shoppingCart} />
@@ -106,6 +120,7 @@ export default class SideBar extends React.Component {
           </SideNav>
         </Navigation>
       </AppContainer>
+      </div>
     );
   }
 }
