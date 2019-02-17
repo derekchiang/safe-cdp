@@ -31,6 +31,7 @@ class MaxWidthDialog extends React.Component {
     open: false,
     fullWidth: true,
     maxWidth: 'md',
+    depositAmount: '',
   };
 
   handleClickOpen = () => {
@@ -41,10 +42,18 @@ class MaxWidthDialog extends React.Component {
     this.setState({ open: false });
   };
 
-  Submit = () => {
+  Submit = async () => {
     this.setState({open: false});
-
-  }
+    let contractJSON = require("../../contracts/Sponsor.json");
+    const networkId = await window.web3.eth.net.getId();
+    const deployedAddress = contractJSON.networks[networkId].address;
+    const sponsorContract = new window.web3.eth.Contract(contractJSON.abi, deployedAddress);
+    let account = (await window.web3.eth.getAccounts())[0];
+    console.log(window.web3.eth.accounts[0]);
+    await sponsorContract.methods.deposit(1).send({
+      "from": account,
+    });
+  };
 
   handleMaxWidthChange = event => {
     this.setState({ maxWidth: event.target.value });
