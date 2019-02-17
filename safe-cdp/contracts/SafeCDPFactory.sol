@@ -198,8 +198,6 @@ contract SafeCDP is DSMath {
         require(!safe(), "Current collateralization is not below the margin call threshold.");
 
         uint debtToPay = diffWithTargetCollateral();
-        sponsorPool.approvePayment(debtToPay);
-        dai.transferFrom(sponsorPool, this, debtToPay);
         dai.approve(tub, 100000000000000000000000);
         tub.wipe(cup, debtToPay);
 
