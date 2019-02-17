@@ -9,6 +9,7 @@ import DepositButton from '../../buttons/DepositButton';
 import InvestForm from './InvestForm';
 import '../../CSS/Sponsor.css';
 import web3 from '../../utilities/web3provider.js'
+import * as web3Utils from 'web3-utils';
 
 const styles = theme => ({
   form: {
@@ -42,6 +43,12 @@ class MaxWidthDialog extends React.Component {
     this.setState({ open: false });
   };
 
+  updateDepositAmount = (ev) => {
+    this.setState({
+      depositAmount: web3Utils.toBN(ev.target.value).mul(web3Utils.toBN(10).pow(web3Utils.toBN(18)))
+    })
+  }
+
   Submit = async () => {
     this.setState({open: false});
     let contractJSON = require("../../contracts/Sponsor.json");
@@ -50,7 +57,7 @@ class MaxWidthDialog extends React.Component {
     const sponsorContract = new window.web3.eth.Contract(contractJSON.abi, deployedAddress);
     let account = (await window.web3.eth.getAccounts())[0];
     console.log(window.web3.eth.accounts[0]);
-    await sponsorContract.methods.deposit(1).send({
+    await sponsorContract.methods.deposit(this.state.depositAmount).send({
       "from": account,
     });
   };
@@ -80,7 +87,9 @@ class MaxWidthDialog extends React.Component {
         >
           <DialogContent>
               Enter quantity of Dai you would like to invest
-            <InvestForm />
+            <InvestForm
+            updateDepositAmount={this.updateDepositAmount}
+            />
           </DialogContent>
           <DialogActions>
             <Button onClick={this.Submit} color="primary">
