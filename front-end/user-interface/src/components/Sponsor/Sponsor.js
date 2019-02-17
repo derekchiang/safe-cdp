@@ -13,10 +13,10 @@ class Sponsor extends Component {
         return ( 
             <div>
                 <SideBar />
-                <div className=''>
+                <div>
                 <WithdrawModal />
                 </div>
-                <div className=''>
+                <div>
                 <DepositModal />
                 </div>
             </div>
