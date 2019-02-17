@@ -177,7 +177,7 @@ contract SafeCDP is DSMath {
         dai.approve(tub, debtToPay);
         tub.wipe(cup, debtToPay);
 
-        MarginCall mc = MarginCall(marginCallNonce, msg.sender, debtToPay, now);
+        MarginCall memory mc = MarginCall(marginCallNonce, msg.sender, debtToPay, now);
         marginCalls.push(mc);
         emit MarginCallInvoked(mc.id, mc.keeper, mc.amount, mc.time);
         marginCallNonce = marginCallNonce.add(1);
