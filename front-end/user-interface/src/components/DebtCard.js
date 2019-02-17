@@ -29,7 +29,16 @@ const styles = {
   },
   pos: {
     marginBottom: 12
-  }
+  },
+  data:{
+    fontSize: 38,
+    fontWeight: 600,
+    color: "#95aac9",
+    fontFamily: "Cerebri Sans, sans-serif",
+    position: 'relative',
+    left:40,
+    bottom:20,
+  },
 };
 
 function SimpleCard(props) {
@@ -44,11 +53,16 @@ function SimpleCard(props) {
           color="textSecondary"
           gutterBottom
         >
-          Debt (Dai)
+          Debt (DAI)
         </Typography>
         <div className='img'>
         <img src={dailogo} alt='dai logo' height='75' width='70'/>
         </div>
+        <Typography
+          className={classes.data}
+          color="textSecondary">
+          60 DAI
+          </Typography>
       </CardContent>
       {/* <CardActions>
         <Button size="small">Learn More</Button>

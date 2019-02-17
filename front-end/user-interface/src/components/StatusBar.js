@@ -10,28 +10,8 @@ class StatusBar extends Component {
         return ( 
             <div>
                 <Progress
-          theme={{
-            error: {
-              symbol: this.state.percent + "%",
-              trailColor: "pink",
-              color: "red"
-            },
-            default: {
-              symbol: this.state.percent + "%",
-              trailColor: "lightblue",
-              color: "blue"
-            },
-            active: {
-              symbol: this.state.percent + "%",
-              trailColor: "yellow",
-              color: "orange"
-            },
-            success: {
-              symbol: this.state.percent + "%",
-              trailColor: "lime",
-              color: "green"
-            }
-          }}
+          // 
+          percent={45}
         />
             </div>
          );

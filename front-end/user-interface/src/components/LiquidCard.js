@@ -27,7 +27,16 @@ const styles = {
   },
   pos: {
     marginBottom: 12
-  }
+  },
+  data:{
+    fontSize: 15,
+    fontWeight: 600,
+    color: "#95aac9",
+    fontFamily: "Cerebri Sans, sans-serif",
+    position: 'relative',
+    left:40,
+    top:5,
+  },
 };
 
 function SimplestCard(props) {
@@ -42,9 +51,13 @@ function SimplestCard(props) {
           color="textSecondary"
           gutterBottom
         >
-          Liquidation Price
+          Liquidation Price (ETH/USD)
         </Typography>
-        
+        <Typography
+          className={classes.data}
+          color="textSecondary">
+          89.999 USD
+          </Typography>
       </CardContent>
       {/* <CardActions>
         <Button size="small">Learn More</Button>

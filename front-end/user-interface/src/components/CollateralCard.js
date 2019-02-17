@@ -28,7 +28,16 @@ const styles = {
   },
   pos: {
     marginBottom: 12
-  }
+  },
+  data:{
+    fontSize: 38,
+    fontWeight: 600,
+    color: "#95aac9",
+    fontFamily: "Cerebri Sans, sans-serif",
+    position: 'relative',
+    left:40,
+    bottom:20,
+  },
 };
 
 function SimplerCard(props) {
@@ -43,11 +52,18 @@ function SimplerCard(props) {
           color="textSecondary"
           gutterBottom
         >
-          Collateral (Eth)
+          Collateral (ETH)
         </Typography>
         <div className='img'>
         <img src={ethlogo} alt='eth logo' height='72' width='100'/>
         </div>
+        
+          <Typography
+          className={classes.data}
+          color="textSecondary">
+          1 ETH
+          </Typography>
+          
       </CardContent>
       {/* <CardActions>
         <Button size="small">Learn More</Button>

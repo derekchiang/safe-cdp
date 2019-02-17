@@ -44,7 +44,7 @@ function SimpleCard(props) {
           color="textSecondary"
           gutterBottom
         >
-          ISSUE / COLLATERAL RATIO (%)
+          ISSUE / COLLATERAL RATIO (212.766%)
         </Typography>
         <StatusBar />
       </CardContent>
