@@ -7,12 +7,13 @@ import DebtCard from "./DebtCard";
 import CollateralCard from "./CollateralCard";
 import IDCard from "./IDCard";
 import FeesCard from "./FeesCard";
+import LiquidCard from "./LiquidCard";
+import EthereumCard from "./EthereumCard";
 import FAQ from "./FAQPanel";
+import SecureModal from "./SecureModal";
 
 //css, images
 import "../CSS/Dashboard.css";
-import LiquidCard from "./LiquidCard";
-import EthereumCard from "./EthereumCard";
 
 class Dashboard extends Component {
   constructor(props) {
@@ -24,6 +25,7 @@ class Dashboard extends Component {
       <div className="dashboard">
         <Fragment>
           <SideBar className="clientNavSidebar" />
+            <SecureModal />
           <div className="dashboardContainer">
             <CollateralRatio className="cardDivTop" />
             <div className="cardTopLeft">
