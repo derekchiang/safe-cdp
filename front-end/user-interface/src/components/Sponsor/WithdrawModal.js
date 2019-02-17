@@ -8,6 +8,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import WithdrawButton from '../../buttons/WithdrawButton';
 import WithdrawForm from './WithdrawForm';
 import '../../CSS/Sponsor.css';
+import web3 from '../../utilities/web3provider.js';
 
 const styles = theme => ({
   form: {
@@ -40,8 +41,17 @@ class MaxWidthDialog extends React.Component {
     this.setState({ open: false });
   };
 
-  Submit = () => {
-    this.setState({open: false})
+  Submit = async () => {
+    this.setState({open: false});
+    console.log("test");
+    let contractJSON = require("../../contracts/Sponsor.json");
+    const networkId = await window.web3.eth.net.getId();
+    const deployedAddress = contractJSON.networks[networkId].address;
+
+    const sponsorContract = new window.web3.eth.Contract(contractJSON.abi, deployedAddress);
+    let account = (await window.web3.eth.getAccounts())[0];
+    console.log(window.web3.eth.accounts[0]);
+    await sponsorContract.methods.withdraw().send({"from": account});
   }
 
   handleMaxWidthChange = event => {
