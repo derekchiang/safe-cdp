@@ -114,7 +114,7 @@ class MaxWidthDialog extends React.Component {
               Secure
             </Button>
             <Button onClick={this.handleClose} color="primary">
-              Close
+              Cancel
             </Button>
           </DialogActions>
         </Dialog>

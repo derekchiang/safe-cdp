@@ -109,7 +109,7 @@ class MaxWidthDialog extends React.Component {
               Payback
             </Button>
             <Button onClick={this.handleClose} color="primary">
-              Close
+              Cancel
             </Button>
           </DialogActions>
         </Dialog>
