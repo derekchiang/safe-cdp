@@ -1,6 +1,7 @@
 import React from 'react';
 import Dashboard from '../components/Dashboard';
 import Sponsor from '../components/Sponsor/Sponsor';
+import FindId from '../components/Auth/FindId';
 import { Route, Switch, Redirect } from 'react-router-dom';
 
 
@@ -13,9 +14,11 @@ class UserAccess extends React.Component {
         return ( 
             <div>
                 
-                    <Route exact path='/'  render={props => < Dashboard {...props} />} />
+                    <Route exact path='/'  render={props => <FindId  {...props} />} />
+                    <Route path='/dashboard'  render={props => < Dashboard {...props} />} />
                     <Route path='/sponsor'  render={props => < Sponsor {...props} />} />
                 
+
             </div>
          );
     }

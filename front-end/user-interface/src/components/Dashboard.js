@@ -76,16 +76,21 @@ class Dashboard extends Component {
     let account = (await window.web3.eth.getAccounts())[0]
 
     console.log(window.web3.eth.accounts[0])
-    let safeCDPAddr = await safeCDPFactory.methods.createSafeCDP(
+    safeCDPFactory.methods.createSafeCDP(
       proxy,
-      web3Utils.fromAscii("3152"),
+      web3Utils.fromAscii("5011"),
       targetCollateralization,
       marginCallThreshold,
       marginCallDuration,
       reward).send({
         "from": account,
+      }).on("receipt", (receipt) => {
+        console.log("receipt:", receipt)
       })
-    console.log("safeCDPAddr:", safeCDPAddr)
+    // console.log("safeCDPAddr:", safeCDPAddr)
+
+    // const cdp = await maker.getCdp(5011)
+    // await cdp.give(safeCDPAddr.returnValues[])
   }
 }
 
