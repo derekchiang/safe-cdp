@@ -1,3 +1,5 @@
+const PrivateKeyProvider = require("truffle-privatekey-provider")
+
 /**
  * Use this file to configure your truffle project. It's seeded with some
  * common settings for different networks and features like migrations,
@@ -18,11 +20,11 @@
  *
  */
 
-// const HDWalletProvider = require('truffle-hdwallet-provider');
+const HDWalletProvider = require('truffle-hdwallet-provider');
 // const infuraKey = "fj4jll3k.....";
 //
-// const fs = require('fs');
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
+const fs = require('fs');
+const mnemonic = fs.readFileSync(".secret").toString().trim();
 
 module.exports = {
   /**
@@ -47,6 +49,16 @@ module.exports = {
       port: 2000,            // Standard Ethereum port (default: none)
       network_id: "*",       // Any network (default: none)
     },
+    kovan: {
+      provider: function () {
+        return new HDWalletProvider(mnemonic, "https://kovan.infura.io")
+      },
+      network_id: 42
+    }
+    // development: {
+    //   provider: () => new PrivateKeyProvider(privateKey, "http://localhost:2000"),
+    //   network_id: "*",
+    // },
 
     // Another network with more advanced options...
     // advanced: {
