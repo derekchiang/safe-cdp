@@ -61,6 +61,9 @@ contract SafeCDPFactory {
     mapping(address => address[]) public userToSafeCDPs;
     // A set of all Safe CDPs ever created
     mapping(address => bool) public safeCDPSet;
+    // A reverse index from CDP to SafeCDP
+    mapping(bytes32 => address) public cdpToSafeCDP;
+    mapping(address => address) public safeCDPToUser;
     // Safe CDP List
     bytes32[] public safeCDPs;
 
@@ -110,6 +113,8 @@ contract SafeCDPFactory {
         userToSafeCDPs[msg.sender].push(address(cdp));
         safeCDPSet[address(cdp)] = true;
         safeCDPs.push(_cup);
+        cdpToSafeCDP[_cup] = address(cdp);
+        safeCDPToUser[address(cdp)] = msg.sender;
         emit SafeCDPCreated(address(cdp));
         return cdp;
     }

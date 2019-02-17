@@ -32,29 +32,56 @@ const styles = {
   }
 };
 
-function SimpleCard(props) {
-  const { classes } = props;
-  const bull = <span className={classes.bullet}>•</span>;
+class SimpleCard extends React.Component {
+  state = {}
 
-  return (
-    <div className='balance'>
-    <Card className={classes.card}>
-      <CardContent>
-        <Typography
-          className={classes.title}
-          color="textSecondary"
-          gutterBottom
-        >
-          Outstanding Balance:
-        </Typography>
-        
-      </CardContent>
-      <CardActions>
-        <BalanceButton />
-      </CardActions> 
-    </Card>
-    </div>
-  );
+  async componentDidMount() {
+    let contractJSON = require("../../contracts/SafeCDPFactory.json")
+    const networkId = await window.web3.eth.net.getId()
+    const deployedAddress = contractJSON.networks[networkId].address
+    const safeCDPFactory = new window.web3.eth.Contract(contractJSON.abi, deployedAddress)
+
+    // We are just getting the first one, which is wrong and hacky.
+    let account = (await window.web3.eth.getAccounts())[0]
+    let safeCDPAddr = await safeCDPFactory.methods.userToSafeCDPs(account, 0).call()
+    contractJSON = require("../../contracts/SafeCDP.json")
+    const safeCDP = new window.web3.eth.Contract(contractJSON.abi, safeCDPAddr)
+    let debt = await safeCDP.methods.totalAccuredDebt().call()
+    this.setState({
+      safeCDP: safeCDP,
+      debt: debt,
+    })
+  }
+
+  onClick = async () => {
+    let account = (await window.web3.eth.getAccounts())[0]
+    await this.state.safeCDP.respondToMarginCalls().send({
+      from: account,
+    })
+  }
+
+  render() {
+    const { classes } = this.props;
+    return (
+      <div className='balance'>
+        <Card className={classes.card}>
+          <CardContent>
+            <Typography
+              className={classes.title}
+              color="textSecondary"
+              gutterBottom
+            >
+              Outstanding Balance: {this.state.debt}
+            </Typography>
+
+          </CardContent>
+          <CardActions>
+            <BalanceButton onClick={this.onClick} />
+          </CardActions>
+        </Card>
+      </div>
+    )
+  }
 }
 
 SimpleCard.propTypes = {
