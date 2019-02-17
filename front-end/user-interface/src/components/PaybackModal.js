@@ -8,8 +8,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import * as web3Utils from 'web3-utils';
 
 import SecureCDPButton from '../buttons/SecureCDPButton';
-import CDPForm from './CDPForm';
 import '../CSS/SecureModal.css';
+import PaybackButton from '../buttons/PaybackButton';
 
 const styles = theme => ({
   form: {
@@ -91,8 +91,8 @@ class MaxWidthDialog extends React.Component {
 
     return (
       <React.Fragment>
-        <div variant="outlined" color="primary" onClick={this.handleClickOpen} className='example-format'>
-          <SecureCDPButton />
+        <div variant="outlined" color="primary" onClick={this.handleClickOpen} className='example-format2'>
+          <PaybackButton />
         </div>
         <Dialog
           fullWidth={this.state.fullWidth}
@@ -102,16 +102,11 @@ class MaxWidthDialog extends React.Component {
           aria-labelledby="max-width-dialog-title"
         >
           <DialogContent>
-            <CDPForm
-              updateTargetCollateralization={this.updateTargetCollateralization}
-              updateMarginCallThreshold={this.updateMarginCallThreshold}
-              updateMarginCallDuration={this.updateMarginCallDuration}
-              updateReward={this.updateReward}
-            />
+            Payback all funds?
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.submit} color="primary">
-              Secure
+            <Button onClick={this.handleClose} color="primary">
+              Payback
             </Button>
             <Button onClick={this.handleClose} color="primary">
               Cancel

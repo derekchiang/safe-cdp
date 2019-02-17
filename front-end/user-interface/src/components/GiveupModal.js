@@ -8,8 +8,9 @@ import DialogContent from '@material-ui/core/DialogContent';
 import * as web3Utils from 'web3-utils';
 
 import SecureCDPButton from '../buttons/SecureCDPButton';
-import CDPForm from './CDPForm';
 import '../CSS/SecureModal.css';
+import PaybackButton from '../buttons/PaybackButton';
+import GiveupButton from '../buttons/GiveupButton';
 
 const styles = theme => ({
   form: {
@@ -91,8 +92,8 @@ class MaxWidthDialog extends React.Component {
 
     return (
       <React.Fragment>
-        <div variant="outlined" color="primary" onClick={this.handleClickOpen} className='example-format'>
-          <SecureCDPButton />
+        <div variant="outlined" color="primary" onClick={this.handleClickOpen} className='example-format3'>
+          <GiveupButton />
         </div>
         <Dialog
           fullWidth={this.state.fullWidth}
@@ -102,16 +103,11 @@ class MaxWidthDialog extends React.Component {
           aria-labelledby="max-width-dialog-title"
         >
           <DialogContent>
-            <CDPForm
-              updateTargetCollateralization={this.updateTargetCollateralization}
-              updateMarginCallThreshold={this.updateMarginCallThreshold}
-              updateMarginCallDuration={this.updateMarginCallDuration}
-              updateReward={this.updateReward}
-            />
+            Forfeit collateral and close out position?
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.submit} color="primary">
-              Secure
+            <Button onClick={this.handleClose} color="primary">
+              Give Up
             </Button>
             <Button onClick={this.handleClose} color="primary">
               Cancel
