@@ -8,6 +8,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DepositButton from '../../buttons/DepositButton';
 import InvestForm from './InvestForm';
 import '../../CSS/Sponsor.css';
+import web3 from '../../utilities/web3provider.js'
 
 const styles = theme => ({
   form: {
@@ -41,7 +42,8 @@ class MaxWidthDialog extends React.Component {
   };
 
   Submit = () => {
-    this.setState({open: false})
+    this.setState({open: false});
+
   }
 
   handleMaxWidthChange = event => {
