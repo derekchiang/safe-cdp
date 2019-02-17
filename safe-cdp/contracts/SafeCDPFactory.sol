@@ -135,6 +135,7 @@ contract SafeCDP is DSMath {
 
     event MarginCallInvoked(uint id, address keeper, uint amount, uint time);
     event MarginCallsResponded(uint[] marginCallIDs);
+    event Log(uint, uint, uint, uint, uint, uint, uint, uint, uint, uint);
 
     address public owner;
     address public proxy;
@@ -292,6 +293,7 @@ contract SafeCDP is DSMath {
         uint pro = rmul(tub.tag(), tub.ink(cup));
         uint con = rmul(tub.vox().par(), tub.tab(cup));
         uint min = rmul(con, marginCallThreshold);
+        emit Log(pro, tub.tag(), tub.ink(cup), con, tub.vox().par(), tub.tab(cup), min, con, marginCallThreshold, tub.mat());
         return pro >= min;
     }
 
