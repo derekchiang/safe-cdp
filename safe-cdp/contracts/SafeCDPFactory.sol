@@ -59,6 +59,8 @@ contract SafeCDPFactory {
     mapping(address => address[]) userToSafeCDPs;
     // A set of all Safe CDPs ever created
     mapping(address => bool) safeCDPSet;
+    // Safe CDP List
+    bytes32[] safeCDPs;
 
     address tubAddr; 
     address daiAddr;
@@ -98,6 +100,7 @@ contract SafeCDPFactory {
             _rewardForKeeper);
         userToSafeCDPs[msg.sender].push(address(cdp));
         safeCDPSet[address(cdp)] = true;
+        safeCDPs.push(_cup);
     }
 }
 
