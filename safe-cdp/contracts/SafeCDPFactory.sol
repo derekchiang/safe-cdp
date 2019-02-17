@@ -62,11 +62,11 @@ contract SafeCDPFactory {
     // Safe CDP List
     bytes32[] public safeCDPs;
 
-    function getSafeCDPs() external returns (bytes32[]) {
+    function getSafeCDPs() external view returns (bytes32[]) {
         return safeCDPs;
     }
 
-    address tubAddr; 
+    address tubAddr;
     address daiAddr;
     address sponsorPoolAddr;
 
@@ -84,7 +84,7 @@ contract SafeCDPFactory {
     //
     // marginCallDuration: the amount of time the owner has to respond to
     // a margin call. E.g. 72 hours.
-    // 
+    //
     // rewardForKeeper: the percentage of debt used to reward keepers and
     // sponsors for their service. E.g. 10
     function createSafeCDP(
@@ -128,38 +128,38 @@ contract SafeCDP is DSMath {
     event MarginCallInvoked(uint id, address keeper, uint amount, uint time);
     event MarginCallsResponded(uint[] marginCallIDs);
 
-    address owner;
-    address proxy;
+    address public owner;
+    address public proxy;
     // tub is the global cdp record store
     // https://github.com/makerdao/sai/blob/master/DEVELOPING.md
     TubInterface tub;
     TokenInterface dai;
     SponsorPoolInterface sponsorPool;
 
-    bytes32 cup;
+    bytes32 public cup;
 
     // The unit of target collateralization and margin call threshold is the
     // same as the unit for liquidation ratio in the SAI contracts, which are
     // all denominated by RAY:
     // https://github.com/makerdao/dai.js/blob/7d20ed9d64e1add128f4fa39b76c72ac4489c34d/src/utils/constants.js#L5
-    uint targetCollateralization;
-    uint marginCallThreshold;
+    uint public targetCollateralization;
+    uint public marginCallThreshold;
 
     // The amount of time the owner has to respond to a margin call before
     // penalty starts accuring and the keeper starts being able to withdraw
     // collaterals.
-    uint marginCallDuration;
+    uint public marginCallDuration;
     // The reward that the keeper gets to earn, as a percentage of the debt
     // that the keeper paid.  For instance if it's 10, the reward is 10%.
-    uint rewardForKeeper;
+    uint public rewardForKeeper;
 
     // A list of margin calls that have been invoked but not cleared.
-    MarginCall[] marginCalls;
-    uint marginCallNonce;
+    MarginCall[] public marginCalls;
+    uint public marginCallNonce;
 
     // Mapping from keeper address to the amount of DAI they can claim from
     // the amount of debt that the owner has paid.
-    mapping(address => uint) owedToKeeper;
+    mapping(address => uint) public owedToKeeper;
 
     constructor(
         address _owner,
@@ -287,7 +287,7 @@ contract SafeCDP is DSMath {
         return pro >= min;
     }
 
-    // The difference between the total amount of collateral right now, 
+    // The difference between the total amount of collateral right now,
     function diffWithTargetCollateral() public returns (uint) {
         uint con = rmul(tub.vox().par(), wadToRay(tub.tab(cup)));
         uint pro = rmul(tub.tag(), wadToRay(tub.ink(cup)));

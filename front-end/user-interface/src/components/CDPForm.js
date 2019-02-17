@@ -14,7 +14,7 @@ const styles = theme => ({
   },
   margin: {
     margin: 0
-    
+
   },
   cssLabel: {
     "&$cssFocused": {
@@ -70,22 +70,22 @@ const styles = theme => ({
     fontSize: 18
   },
   position: {
-    display:'flex',
-    justifyContent:'center',
-    flexDirection:'column',
-    alignContent:'space-between',
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    alignContent: 'space-between',
     width: "100%",
     padding: '8px'
-    
-    
+
+
   },
   group: {
-    display:'flex',
-    flexDirection:'row',
+    display: 'flex',
+    flexDirection: 'row',
     width: "100%"
   },
   wholegroup: {
-    position:'relative',
+    position: 'relative',
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'center',
@@ -94,9 +94,9 @@ const styles = theme => ({
       width: '100%'
     }
   },
-  lasttwo:{
+  lasttwo: {
     width: '100%'
-    
+
   }
 });
 
@@ -106,124 +106,121 @@ function CustomizedInputs(props) {
   return (
     <div className={classes.wholegroup}>
       <div className={classes.group}>
-    <div className={`${classes.container} ${classes.position}`}>
-      <FormControl className={classes.margin}>
-        <InputLabel
-          htmlFor="custom-css-standard-input"
-          classes={{
-            root: classes.cssLabel,
-            focused: classes.cssFocused,
-          }}
-        >
-          Target Collateralization {<span id="example-txt">(Ex. 200%)</span>}
-        </InputLabel>
+        <div className={`${classes.container} ${classes.position}`}>
+          <FormControl className={classes.margin}>
+            <InputLabel
+              htmlFor="custom-css-standard-input"
+              classes={{
+                root: classes.cssLabel,
+                focused: classes.cssFocused,
+              }}
+            >
+              Target Collateralization {<span id="example-txt">(Ex. 200%)</span>}
+            </InputLabel>
 
-        <Input
-          id="custom-css-standard-input"
-          onChange={props.inputHandler}
-          name="TC"
-          classes={{
-            underline: classes.cssUnderline
-          }}
-        />
-      </FormControl>
-    </div>
-    <div className={`${classes.container} ${classes.position}`}>
-      <FormControl className={classes.margin}>
-        <InputLabel
-          htmlFor="custom-css-standard-input"
-          classes={{
-            root: classes.cssLabel,
-            focused: classes.cssFocused
-          }}
-        >
-          Margin Call Threshold {<span id="example-txt">(Ex. 180%)</span>}
-        </InputLabel>
+            <Input
+              id="custom-css-standard-input"
+              onChange={props.updateTargetCollateralization}
+              name="TC"
+              classes={{
+                underline: classes.cssUnderline
+              }}
+            />
+          </FormControl>
+        </div>
+        <div className={`${classes.container} ${classes.position}`}>
+          <FormControl className={classes.margin}>
+            <InputLabel
+              htmlFor="custom-css-standard-input"
+              classes={{
+                root: classes.cssLabel,
+                focused: classes.cssFocused
+              }}
+            >
+              Margin Call Threshold {<span id="example-txt">(Ex. 180%)</span>}
+            </InputLabel>
 
-        <Input
-          id="custom-css-standard-input"
-          onChange={props.inputHandler}
-          name="MCT"
-          classes={{
-            underline: classes.cssUnderline
-          }}
-        />
-      </FormControl>
-    </div>
-    </div>
+            <Input
+              id="custom-css-standard-input"
+              onChange={props.updateMarginCallThreshold}
+              name="MCT"
+              classes={{
+                underline: classes.cssUnderline
+              }}
+            />
+          </FormControl>
+        </div>
+      </div>
 
       <div className={classes.group}>
-      <div className={`${classes.container} ${classes.position}`}>
-        <FormControl className={classes.margin}>
-          <InputLabel
-            htmlFor="custom-css-standard-input"
-            classes={{
-              root: classes.cssLabel,
-              focused: classes.cssFocused
-            }}
-          >
-            Margin Call Duration {<span id="example-txt">(Ex. 72 hours)</span>}
-        </InputLabel>
+        <div className={`${classes.container} ${classes.position}`}>
+          <FormControl className={classes.margin}>
+            <InputLabel
+              htmlFor="custom-css-standard-input"
+              classes={{
+                root: classes.cssLabel,
+                focused: classes.cssFocused
+              }}
+            >
+              Margin Call Duration {<span id="example-txt">(Ex. 72 hours)</span>}
+            </InputLabel>
 
-          <Input
-            id="custom-css-standard-input"
+            <Input
+              id="custom-css-standard-input"
+              onChange={props.updateMarginCallDuration}
+              name="MCD"
+              classes={{
+                underline: classes.cssUnderline
+              }}
+            />
+          </FormControl>
+        </div>
+        <div className={`${classes.container} ${classes.position}`}>
+          <FormControl className={classes.margin}>
+            <InputLabel
+              htmlFor="custom-css-standard-input"
+              classes={{
+                root: classes.cssLabel,
+                focused: classes.cssFocused
+              }}
+            >
+              Reward {<span id="example-txt">(Ex. 1%)</span>}
+            </InputLabel>
 
-            onChange={props.inputHandler}
-            name="MCD"
-            classes={{
-              underline: classes.cssUnderline
-            }}
-          />
-        </FormControl>
-      </div>
-      <div className={`${classes.container} ${classes.position}`}>
-        <FormControl className={classes.margin}>
-          <InputLabel
-            htmlFor="custom-css-standard-input"
-            classes={{
-              root: classes.cssLabel,
-              focused: classes.cssFocused
-            }}
-          >
-            Reward {<span id="example-txt">(Ex. 1%)</span>}
-        </InputLabel>
-
-          <Input
-            id="custom-css-standard-input"
-
-            onChange={props.inputHandler}
-            name=""
-            classes={{
-              underline: classes.cssUnderline
-            }}
-          />
-        </FormControl>
-      </div>
+            <Input
+              id="custom-css-standard-input"
+              onChange={props.updateReward}
+              name=""
+              classes={{
+                underline: classes.cssUnderline
+              }}
+            />
+          </FormControl>
+        </div>
       </div>
       <div className={classes.group} >
-      <div className={`${classes.container} ${classes.position}`}>
-        <FormControl className={`${classes.margin} ${classes.lasttwo}`}>
-          <InputLabel
-            htmlFor="custom-css-standard-input"
-            classes={{
-              root: classes.cssLabel,
-              focused: classes.cssFocused
-            }}
-          >
-            Phone Number {<span id="example-txt">(Ex. xxx-xxx-xxxx)</span>}
-        </InputLabel>
+        <div className={`${classes.container} ${classes.position}`}>
+          <FormControl className={`${classes.margin} ${classes.lasttwo}`}>
+            <InputLabel
+              htmlFor="custom-css-standard-input"
+              classes={{
+                root: classes.cssLabel,
+                focused: classes.cssFocused
+              }}
+            >
+              Phone Number {<span id="example-txt">(Ex. xxx-xxx-xxxx)</span>}
+            </InputLabel>
 
-          <Input
-            id="custom-css-standard-input"
-
-            onChange={props.inputHandler}
-            name="PhoneNumber"
-            classes={{
-              underline: classes.cssUnderline
-            }}
-          />
-        </FormControl>
-      </div>
+            <Input
+              id="custom-css-standard-input"
+              onChange={props.updatePhoneNumber}
+              name="PhoneNumber"
+              classes={{
+                underline: classes.cssUnderline
+              }}
+            />
+          </FormControl>
+        </div>
       </div>
     </div>
   );
