@@ -14,8 +14,6 @@ import { shoppingCart } from "react-icons-kit/fa/shoppingCart";
 import { cubes } from "react-icons-kit/fa/cubes";
 import { circleO } from "react-icons-kit/fa/circleO";
 import logo from "../assets/imgs/SafeCDPlogo.svg";
-import Dashboard from "./Dashboard";
-import Sponsor from "./Sponsor/Sponsor";
 
 const AppContainer = styled(BaseAppContainer)`
   height: calc(100vh - 40px);
@@ -100,9 +98,11 @@ export default class SideBar extends React.Component {
                 <Text>Sponsor</Text>
               </Nav>
             <Nav id="3">
+            <Link to='/balance'>
               <IconCnt>
                 <Icon icon={shoppingCart} />
               </IconCnt>
+              </Link>
               <Text>Deliveries</Text>
             </Nav>
             <Nav id="4">
