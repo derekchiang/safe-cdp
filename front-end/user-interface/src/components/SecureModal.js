@@ -6,6 +6,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import SecureCDPButton from '../buttons/SecureCDPButton';
+import CDPForm from './CDPForm';
 import '../CSS/SecureModal.css';
 
 const styles = theme => ({
@@ -39,6 +40,10 @@ class MaxWidthDialog extends React.Component {
     this.setState({ open: false });
   };
 
+  Submit = () => {
+    this.setState({open: false})
+  }
+
   handleMaxWidthChange = event => {
     this.setState({ maxWidth: event.target.value });
   };
@@ -63,9 +68,12 @@ class MaxWidthDialog extends React.Component {
           aria-labelledby="max-width-dialog-title"
         >
           <DialogContent>
-            content
+            <CDPForm />
           </DialogContent>
           <DialogActions>
+            <Button onClick={this.Submit} color="primary">
+              Secure
+            </Button>
             <Button onClick={this.handleClose} color="primary">
               Close
             </Button>
