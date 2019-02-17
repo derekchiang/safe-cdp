@@ -3,6 +3,7 @@ import SideBar from '../Sidebar';
 import WithdrawModal from './WithdrawModal';
 import DepositModal from './DepositModal';
 import SponsorCard from './SponsorCard.js';
+import ROI from './ROI';
 
 
 class Sponsor extends Component {
@@ -15,6 +16,7 @@ class Sponsor extends Component {
             <div>
                 <SideBar />
                 <SponsorCard />
+                <ROI />
                 <div>
                 <WithdrawModal />
                 </div>
