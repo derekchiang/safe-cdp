@@ -13483,12 +13483,12 @@
     "42": {
       "events": {},
       "links": {},
-      "address": "0x3ECB57204318BE2eC0e1E2c32e7144AAE6162DC6",
-      "transactionHash": "0x0f3a693455d40e880b5a07266b86220c9fa1ad66627c0859e8086f67efb6af18"
+      "address": "0x0b293Ab68495698439950484856a761f470Cb014",
+      "transactionHash": "0xa13061522fad053ce4a9cd2d0f0b725f7fddfc470ce849bc6d445d2e8fbe4041"
     }
   },
   "schemaVersion": "3.0.2",
-  "updatedAt": "2019-02-17T12:12:56.739Z",
+  "updatedAt": "2019-02-17T12:38:44.656Z",
   "devdoc": {
     "methods": {
       "isOwner()": {
