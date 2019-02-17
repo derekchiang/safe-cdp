@@ -27,8 +27,8 @@ const styles = theme => ({
   },
 });
 
-const RAY_POWER = 27
-const SECONDS_IN_DAYS = 24 * 60 * 60
+const RAY_POWER = web3Utils.toBN(27)
+const SECONDS_IN_DAYS = web3Utils.toBN(24 * 60 * 60)
 
 class MaxWidthDialog extends React.Component {
   state = {
@@ -47,13 +47,13 @@ class MaxWidthDialog extends React.Component {
 
   updateTargetCollateralization = (ev) => {
     this.setState({
-      targetCollateralization: web3Utils.toBN(ev.target.value).mul(web3Utils.toBN(10).pow(RAY_POWER)).div(100)
+      targetCollateralization: web3Utils.toBN(ev.target.value).mul(web3Utils.toBN(10).pow(RAY_POWER)).div(web3Utils.toBN(100))
     })
   }
 
   updateMarginCallThreshold = (ev) => {
     this.setState({
-      marginCallThreshold: web3Utils.toBN(ev.target.value).mul(web3Utils.toBN(10).pow(RAY_POWER)).div(100)
+      marginCallThreshold: web3Utils.toBN(ev.target.value).mul(web3Utils.toBN(10).pow(RAY_POWER)).div(web3Utils.toBN(100))
     })
   }
 

@@ -1,7 +1,5 @@
 import React, { Component, Fragment } from "react";
 import Maker from '@makerdao/dai';
-import Web3 from "web3";
-
 
 //components
 import SideBar from "./Sidebar";
@@ -64,18 +62,6 @@ class Dashboard extends Component {
   }
 
   async componentDidMount() {
-    if (window.ethereum) {
-      window.web3 = new Web3(window.ethereum);
-      try {
-        await window.ethereum.enable();
-      } catch (error) {
-        // User denied account access...
-      }
-    } else if (window.web3) {
-      window.web3 = new Web3(window.web3.currentProvider);
-    } else {
-      console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
-    }
     let maker = await Maker.create('browser')
     let proxy = maker.service('proxy').currentProxy()
     console.log("proxy:", proxy);
