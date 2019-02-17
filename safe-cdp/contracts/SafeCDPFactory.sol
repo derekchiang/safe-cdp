@@ -200,14 +200,10 @@ contract SafeCDP is DSMath {
         uint debtToPay = diffWithTargetCollateral();
         sponsorPool.approvePayment(debtToPay);
         dai.transferFrom(sponsorPool, this, debtToPay);
-        dai.approve(tub, debtToPay);
+        dai.approve(tub, 100000000000000000000000);
         tub.wipe(cup, debtToPay);
 
-        MarginCall memory mc = MarginCall(marginCallNonce, msg.sender, debtToPay, now);
-        marginCalls.push(mc);
-        emit MarginCallInvoked(mc.id, mc.keeper, mc.amount, mc.time);
-        marginCallNonce = marginCallNonce.add(1);
-        return mc.id;
+        return 0;
     }
 
     function withdrawOwedCollateral() public pure {
@@ -303,6 +299,7 @@ contract SafeCDP is DSMath {
         uint pro = rmul(tub.tag(), wadToRay(tub.ink(cup)));
         // TODO: is this actually the right unit to use??  You wound up
         // with a ray number, but what you want is a DAI token count
+        emit Log(con, tub.vox().par(), wadToRay(tub.tab(cup)), pro, tub.tag(), wadToRay(tub.ink(cup)), rayToWad(con.sub(rdiv(pro, targetCollateralization))), 0, 0, 0);
         return rayToWad(con.sub(rdiv(pro, targetCollateralization)));
     }
 

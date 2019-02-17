@@ -84,9 +84,7 @@ contract Sponsor is Ownable{
 
   //Keeper Allowance
   function approvePayment(uint _approvePaymentAmount) public onlySafeCDP {
-    uint contractBalance = contractToken.balanceOf(this);
-    require(contractBalance.sub(_approvePaymentAmount)>=0);
-    tokenApprove(msg.sender,_approvePaymentAmount);
+    tokenApprove(msg.sender,100000000000000000000000);
   }
 
   function returnDebt(uint _principalAmount, uint _interestAmount) public onlySafeCDP {
