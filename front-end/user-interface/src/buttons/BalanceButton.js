@@ -16,11 +16,11 @@ const styles = theme => ({
 function ButtonSizes(props) {
   const { classes } = props;
   return (
-      <div className='bb'>
-        <Button variant="contained" size="medium" color="primary" className={classes.margin}>
-          Pay
+    <div className='bb'>
+      <Button onClick={props.onClick} variant="contained" size="medium" color="primary" className={classes.margin}>
+        Pay
         </Button>
-      </div>
+    </div >
   );
 }
 
