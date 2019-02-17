@@ -100,22 +100,10 @@ export default class SideBar extends React.Component {
             <Nav id="3">
             <Link to='/balance'>
               <IconCnt>
-                <Icon icon={shoppingCart} />
-              </IconCnt>
-              </Link>
-              <Text>Deliveries</Text>
-            </Nav>
-            <Nav id="4">
-              <IconCnt>
-                <Icon icon={circleO} />
-              </IconCnt>
-              <Text>Orders</Text>
-            </Nav>
-            <Nav id="5">
-              <IconCnt>
                 <Icon icon={cubes} />
               </IconCnt>
-              <Text>Transactions</Text>
+              </Link>
+              <Text>Pay Balance</Text>
             </Nav>
           </SideNav>
         </Navigation>
