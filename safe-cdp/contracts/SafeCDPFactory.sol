@@ -56,11 +56,15 @@ contract SponsorPoolInterface {
 
 contract SafeCDPFactory {
     // Map from user address to the Safe CDPs they own
-    mapping(address => address[]) userToSafeCDPs;
+    mapping(address => address[]) public userToSafeCDPs;
     // A set of all Safe CDPs ever created
-    mapping(address => bool) safeCDPSet;
+    mapping(address => bool) public safeCDPSet;
     // Safe CDP List
-    bytes32[] safeCDPs;
+    bytes32[] public safeCDPs;
+
+    function getSafeCDPs() external returns (bytes32[]) {
+        return safeCDPs;
+    }
 
     address tubAddr; 
     address daiAddr;
@@ -84,15 +88,15 @@ contract SafeCDPFactory {
     // rewardForKeeper: the percentage of debt used to reward keepers and
     // sponsors for their service. E.g. 10
     function createSafeCDP(
-        address _owner,
+        address _proxy,
         bytes32 _cup,
         uint _targetCollateralization,
         uint _marginCallThreshold,
         uint _marginCallDuration,
         uint _rewardForKeeper) public returns (address) {
         SafeCDP cdp = new SafeCDP(
-            _owner,
             msg.sender,
+            _proxy,
             tubAddr,
             daiAddr,
             sponsorPoolAddr,
@@ -104,6 +108,7 @@ contract SafeCDPFactory {
         userToSafeCDPs[msg.sender].push(address(cdp));
         safeCDPSet[address(cdp)] = true;
         safeCDPs.push(_cup);
+        return cdp;
     }
 }
 
