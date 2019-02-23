@@ -1,3 +1,5 @@
+**We have moved the project [here](https://github.com/safe-cdp/safe-cdp-contracts).**
+
 # SafeCDP
 
 SafeCDP is a decentralized protocol for preventing [CDPs](https://cdp.makerdao.com/) from auto liquidation.  CDP is the lending service that underpins the stablecoin [DAI](https://makerdao.com/en/whitepaper/).
